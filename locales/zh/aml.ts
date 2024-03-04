@@ -1,0 +1,23 @@
+// Chinese version
+export default {
+  amlComplianceProgram: 'AML合规计划',
+  firmPolicy: '1. 公司政策',
+  firmPolicyDesc: 'RubyProxy致力于防止洗钱和资助恐怖主义和犯罪活动。我们严格遵守《银行保密法》（BSA）及其实施法规的要求，确保我们的运营不会促成非法活动。我们的AML程序和内部控制措施旨在遵守BSA法规和适用法律，定期审查以适应监管变化和业务模式的转变。',
+  reportingAuthorities: '2. 向当局报告和合作',
+  reportingAuthoritiesDesc: 'RubyProxy在遵守FinCEN的要求时保持机密，并且只会根据法律义务披露必要的信息。',
+  nationalSecurityLetters: '国家安全信函',
+  nationalSecurityLettersDesc: '国家安全信函（NSL）的接收受到最高机密对待。我们的政策禁止披露NSL的接收或其中请求的信息，以确保合规并保持所需的保密性。NSL接收后提交的任何SAR都将不包含NSL的任何提及，仅关注观察到的可疑活动。',
+  accountMonitoring: '3. 账户监控',
+  accountMonitoringDesc: 'RubyProxy积极监控账户是否存在可疑活动，考虑到我们服务的风险因素。',
+  redFlags: '红旗标志',
+  redFlagsDesc: '潜在的洗钱或资助恐怖主义的迹象包括但不限于客户提供的信息不一致，不愿提供完整的尽职调查信息，与高风险司法管辖区的交易以及与客户资料不符的不寻常的活动模式。',
+  amlDocumentation: '4. AML文件和SAR提交',
+  amlDocumentationDesc: 'RubyProxy指定的AML合规官员负责正确维护AML记录并根据法律的要求提交可疑活动报告（SAR）。',
+  collaborationFinancialInstitutions: '5. 与金融机构的合作',
+  collaborationFinancialInstitutionsDesc: 'RubyProxy积极与合作伙伴金融机构合作，以打击洗钱行为。这包括共享相关信息和利用异常报告有效监控客户活动，确保遵守AML法规。',
+  executiveEndorsement: '6. 高管认可',
+  executiveEndorsementDesc: '这个AML合规计划已被RubyProxy的高级管理层正式批准，确认其设计以确保遵守BSA的要求和相关法规。',
+  effectiveDate: '生效日期：2024年3月',
+  company: '公司：RubyProxy解决方案',
+  commitmentStatement: '本文档概述了RubyProxy致力于维护最高标准的反洗钱合规性，体现了我们对合法和道德商业实践的承诺。',
+}

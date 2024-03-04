@@ -1,0 +1,17 @@
+export default {
+  refundPolicy: 'Refund Policy',
+  policyIntroduction: 'RubyProxy is committed to delivering reliable and quality service to our clients. This policy outlines our approach to handling refunds, cancellations, and chargebacks, aligning with our Terms of Use and Service Level Agreement. Please review this policy thoroughly before using our services to understand the guidelines for resolving any disputes that might arise.',
+  disputeResolution: 'Dispute Resolution',
+  disputeResolutionDesc: 'Disputes related to the use of RubyProxy\'s services or system will be resolved as follows:',
+  issueResolution: '1. Any issues concerning service usage should be directed to RubyProxy\'s customer support at support@rubyproxy.com. This includes requests for refunds, cancellations, or addressing chargeback concerns.',
+  supportLogs: '2. For security purposes, we maintain logs of all customer support interactions.',
+  nonRefundableSituations: 'Non-refundable Situations:',
+  incompleteInformation: '1. Inaccurate or incomplete information provided by the customer during the registration process.',
+  accountViolation: '2. Account suspension or freezing due to the customer\'s violation of legal guidelines.',
+  termsViolation: '3. Failure to adhere to the Terms of Use, particularly the acceptable use policy of our services.',
+  dataTransmission: '4. Data transmission or receipt initiated by the customer, especially after purchasing a service package via the dashboard.',
+  serviceQuality: '5. Service quality meeting the standards set in our Service Level Agreement.',
+  serviceExpiration: '6. Expiration of the purchased service package.',
+  thirdPartyServices: '7. Limitations on connection quality and speed due to third-party services, which are beyond RubyProxy\'s control. We do not guarantee the performance of third-party internet services, and issues related to connection speeds are not grounds for refunds.',
+  softwareIncompatibility: '8. Incompatibility of client-side software with our system. RubyProxy is not liable for issues arising from the use of third-party or proprietary software by the client for system access or use.',
+}
