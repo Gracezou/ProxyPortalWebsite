@@ -61,7 +61,7 @@
         <el-menu-item index="/admin/rotating/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
         <el-menu-item index="/admin/rotating/history">{{ $t('menu.paymentHistory') }}</el-menu-item>
       </el-sub-menu>
-      <el-sub-menu index="/admin/isp">
+      <!-- <el-sub-menu index="/admin/isp">
         <template #title>
           <el-icon>
             <Link />
@@ -70,7 +70,7 @@
         </template>
         <el-menu-item index="/admin/isp/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
         <el-menu-item index="/admin/isp/history">{{ $t('menu.paymentHistory') }}</el-menu-item>
-      </el-sub-menu>
+      </el-sub-menu> -->
       <el-sub-menu index="/admin/residential">
         <template #title>
           <el-icon>
@@ -99,12 +99,12 @@
     </el-menu>
   </el-aside>
 </template>
-  
+
 <script setup lang='ts'>
 import { Link, Monitor } from '@element-plus/icons-vue';
 
 </script>
-  
+
 <style lang="scss" scoped>
 .aside_wrapper {
   height: calc(100vh - 84px);

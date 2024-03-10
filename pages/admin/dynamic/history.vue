@@ -69,7 +69,7 @@ const searchKey = ref('')
 const getDataByPage = () => {
   loading.value = true
   const params: any = {
-    keywords: searchKey.value,
+    order_id: searchKey.value,
     cur_page: pagination.currentPage,
     page_size: pagination.pageSize,
   }

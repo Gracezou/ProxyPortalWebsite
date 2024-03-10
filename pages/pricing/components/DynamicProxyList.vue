@@ -1,17 +1,13 @@
 <template>
   <div class="dynamic_proxy_list_wrapper">
     <el-radio-group class="dynamic_proxy_type_group" v-model="planType" size="large" fill="#fff" text-color="#4D4206">
-      <el-radio-button label="personal">
-        {{ $t('pricing.personal') }}
-      </el-radio-button>
-      <el-radio-button label="enterprise">
-        {{ $t('pricing.enterprise') }}
-      </el-radio-button>
+      <el-radio-button :label="$t('pricing.personal')" value="personal" />
+      <el-radio-button :label="$t('pricing.enterprise')" value="enterprise" />
     </el-radio-group>
 
     <div class="list_group_box">
-      <div v-for="item in showList" :key="item.size" class="list_group">
-        <p class="group_title">{{ item.size }}</p>
+      <div v-for="item in showList" :key="item.planCode" class="list_group">
+        <p class="group_title">{{ item.type == 'custom' ? 'Custom +' : item.size }}</p>
         <p class="total_box">
           <span>{{ $t('pricing.total') }}:</span>
           <span class="total_price">${{ item.total || '?' }}</span>
@@ -28,7 +24,7 @@
           <el-icon color="#18D2AB" size="16"><Select /></el-icon>+
           <div class="info">
             <p>{{ $t('pricing.validityPeriod') }}</p>
-            <p v-if="item.size == 'Custom'">{{ $t('pricing.customDays') }}</p>
+            <p v-if="item.type == 'custom'">{{ $t('pricing.customDays') }}</p>
             <div v-else>
               <el-input-number v-model="item.num" :min="0" controls-position="right" :step="30" />
               <span>{{ $t('pricing.days') }}</span>
@@ -40,20 +36,35 @@
           <span>/{{ $t('pricing.GB') }}</span>
           <span v-if="item.originPrice" class="origin_price">${{ item.originPrice }}</span>
         </p>
-        <el-button type="primary" plain :icon="ShoppingCart">{{ $t('pricing.orderNow') }}</el-button>
+        <el-button type="primary" plain :icon="item.type == 'custom' ? PhoneFilled : ShoppingCart"
+          @click="() => submitHandler(item)">
+          {{ item.type == 'custom' ? $t('pricing.contactUs') : $t('pricing.orderNow') }}
+        </el-button>
         <el-divider />
         <p class="ul_title">{{ $t('pricing.starterIncludes') }}</p>
         <ul>
           <li v-for="sta in item.starters" :key="sta">{{ sta }}</li>
         </ul>
-
       </div>
     </div>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
-import { Select, ShoppingCart } from '@element-plus/icons-vue';
+import { PhoneFilled, Select, ShoppingCart } from '@element-plus/icons-vue';
+const props = defineProps({
+  personal: {
+    type: Array,
+    default: () => []
+  },
+  enterprise: {
+    type: Array,
+    default: () => []
+  }
+})
+
+const emits = defineEmits(['order'])
+
 enum PlanTypeEnums {
   personal = 'personal',
   enterprise = 'enterprise',
@@ -74,20 +85,50 @@ const showList = computed(() =>
   planType.value === PlanTypeEnums.personal ? personalList.value : enterpriseList.value
 )
 
-const personalList = ref([
-  { size: '5GB', price: 3, originPrice: undefined, total: 15, originTotal: undefined, starters: starterList, num: 30 },
-  { size: '40GB', price: 2.2, originPrice: 2.5, total: 88, originTotal: 100, starters: starterList, num: 30 },
-  { size: '150GB', price: 1.5, originPrice: 1.8, total: 225, originTotal: 270, starters: starterList, num: 30 },
-  { size: '280GB', price: 1.1, originPrice: 1.5, total: 15, originTotal: undefined, starters: starterList, num: 30 },
-  { size: '1000GB', extra: '100GB', price: 0.8, originPrice: 1.2, total: 816, originTotal: 1224, starters: starterList, num: 30 },
-])
+const personalList = computed(() => {
+  return props.personal.map((item: any) => {
+    return reactive({
+      planCode: item.planCode,
+      type: item.PlanType,
+      size: item.Flow + 'GB',
+      price: item.UnitPrice,
+      originPrice: item.UnitOriginPrice,
+      total: item.TotalPrice,
+      originTotal: item.TotalOriginPrice,
+      extra: item.GiftFlow,
+      starters: starterList,
+      num: item.DefaultDays
+    })
+  })
+})
+const enterpriseList = computed(() => {
+  return props.enterprise.map((item: any) => {
+    return reactive({
+      planCode: item.planCode,
+      type: item.PlanType,
+      size: item.Flow + 'GB',
+      price: item.UnitPrice,
+      originPrice: item.UnitOriginPrice,
+      total: item.TotalPrice,
+      originTotal: item.TotalOriginPrice,
+      extra: item.GiftFlow,
+      starters: starterList,
+      num: item.DefaultDays
+    })
+  })
+})
 
-const enterpriseList = ref([
-  { size: '3000GB', price: 0.71, originPrice: undefined, total: 2130, originTotal: undefined, starters: starterList, num: 90 },
-  { size: '5000GB', price: 0.7, originPrice: undefined, total: 3500, originTotal: undefined, starters: starterList, num: 120 },
-  { size: '2000GB', extra: '2000GB', price: 0.75, originPrice: undefined, total: 816, originTotal: undefined, starters: starterList, num: 120 },
-  { size: 'Custom', price: undefined, originPrice: undefined, total: undefined, originTotal: undefined, starters: starterList, num: 30 },
-])
+
+const submitHandler = (data: any) => {
+  console.log(data)
+  emits('order', {
+    planType: data.type,
+    planCode: data.planCode,
+    rotateDuration: data.num,
+    amount: data.total
+  })
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -223,8 +264,8 @@ const enterpriseList = ref([
 
 }
 </style>
-  
-<style  lang="scss">
+
+<style lang="scss">
 .dynamic_proxy_type_group {
   .el-radio-button {
     flex: 1;

@@ -17,6 +17,9 @@ import pricing from './pricing'
 // admin - proxy
 import subAccount from './account'
 import allowlist from './allowlist'
+import api from './api'
+import overview from './overview'
+import userauth from './userauth'
 // admin - product
 import datacenter from './datacenter'
 import dynamic from './dynamic'
@@ -38,8 +41,12 @@ export default {
   aml,
   shipping,
   pricing,
+  // admin - proxy
+  overview,
+  api,
   allowlist,
   subAccount,
+  userauth,
   // admin - products
   datacenter,
   residential,

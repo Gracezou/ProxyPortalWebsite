@@ -1,14 +1,17 @@
 <template>
   <div class="logo_wrapper">
-    <img src="~/assets/image/logo.jpg" alt="logo" />
-    <img class="logo_icon" src="~/assets/image/logo_icon.png" alt="logo_icon" />
+    <img src="~/assets/image/rubyproxy_logo.png" alt="logo" />
+    <img class="logo_icon" src="~/assets/image/ruby_stone_log.png" alt="logo_icon" />
   </div>
 </template>
+
 <style scoped lang="scss">
 .logo_wrapper {
   display: flex;
   align-items: center;
   position: relative;
+  padding: 20px 0;
+  box-sizing: border-box;
 
   img {
     width: 100%;

@@ -178,7 +178,7 @@ const gotoPageHandler = (href: string | undefined) => {
 
 .footer_logo_wrapper {
   width: 320px;
-  height: 62px;
+  height: 100px;
 
   .logo_icon {
     width: 48px;

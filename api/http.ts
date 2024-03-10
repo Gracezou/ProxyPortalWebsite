@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import { getToken } from './storage';
 const http = axios.create()
 // 基础路径
-const BASE_URL = 'http://api.mcdlmail.com'
+export const BASE_URL = 'http://api.mcdlmail.com'
 
 http.interceptors.request.use(
   async (config) => {
@@ -38,6 +38,7 @@ http.interceptors.response.use(
       if (response.data.code === 200) {
         return Promise.resolve(response.data.data)
       } else {
+        if (response.config.headers.noMessage) return Promise.reject(response)
         ElMessage({ type: 'error', message: response.data.message, grouping: true })
         return Promise.reject(response)
       }

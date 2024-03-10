@@ -16,7 +16,7 @@
     </div>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
 import LogoComp from '~/layouts/components/LogoComp.vue';
 
@@ -30,12 +30,12 @@ const contentsList = [
 ]
 
 </script>
-  
+
 <style lang="scss" scoped>
 .ruby_proxy_ad {
   width: 100%;
   height: 1200px;
-  background-image: url('images/pricing/pricing_bg2.png');
+  background: url('~/assets/image/pricing_bg2.png');
   background-repeat: no-repeat;
   background-size: cover;
   margin-bottom: 56px;

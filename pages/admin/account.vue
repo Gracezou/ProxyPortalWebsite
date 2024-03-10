@@ -4,7 +4,7 @@
       <h1>{{ $t('subAccount.subAccount') }}</h1>
     </div>
     <div class="allow_list_body">
-      <div class="table_wrapper">
+      <div class="table_wrapper" v-loading="loading">
         <div class="add_box">
           <el-input v-model="searchKey" size="large" :placeholder="$t('subAccount.searchInput')" @keydown.enter="init">
             <template #append>
@@ -17,6 +17,7 @@
           header-cell-class-name="header_cell_custom">
           <el-table-column prop="account" :align="'center'" :label="$t('subAccount.userName')" />
           <el-table-column prop="state" :label="$t('subAccount.status')" :align="'center'">
+
             <template #default="scope">
               <el-text v-if="scope.row.state == 1" type="success">Active</el-text>
               <el-text v-else-if="scope.row.state == 0" type="danger">Disabled</el-text>
@@ -28,9 +29,10 @@
           <el-table-column prop="remark" :label="$t('subAccount.remark')" :align="'center'" />
           <el-table-column prop="create_time" :label="$t('subAccount.addTime')" :align="'center'" />
           <el-table-column :label="$t('subAccount.operate')" :align="'center'">
+
             <template #default="scope">
               <el-icon class="option_btn" @click="() => changeStateHandler(scope.row)">
-                <Edit />
+                <Lock />
               </el-icon>
               <el-icon class="option_btn" @click="() => editHandler(scope.row)">
                 <Edit />
@@ -61,6 +63,7 @@
             <el-input :rows="3" type="textarea" v-model="form.remark" />
           </el-form-item>
         </el-form>
+
         <template #footer>
           <div class="dialog-footer">
             <el-button @click="dialogVisible = false">Cancel</el-button>
@@ -73,9 +76,9 @@
     </client-only>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
-import { Delete, Edit } from '@element-plus/icons-vue';
+import { Delete, Edit, Lock } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import http from '~/api/http';
 const tableData = ref([])
@@ -96,7 +99,7 @@ const init = () => {
 const searchKey = ref('')
 const getDataByPage = () => {
   loading.value = true
-  http.get('/v1/websiteget_sub_account_list',
+  http.get('/v1/website/get_sub_account_list',
     { params: { keywords: searchKey.value, cur_page: pagination.currentPage, page_size: pagination.pageSize } }
   ).then((res: any) => {
     tableData.value = res.cur_data
@@ -186,7 +189,7 @@ const submitHandler = () => {
 }
 
 </script>
-  
+
 <style lang="scss" scoped>
 .allow_list_wrapper {
   .allow_list_header {
@@ -282,7 +285,8 @@ const submitHandler = () => {
 
 }
 </style>
-<style lang="scss" >
+
+<style lang="scss">
 .allow_list_wrapper {
   .el-input-number {
     width: 100%;

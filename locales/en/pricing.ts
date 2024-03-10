@@ -18,8 +18,10 @@ export default {
   stableResidential: 'Stable Residential IPs',
   validityPeriod: 'Validity Period',
   starterIncludes: 'Starter includes',
+  customDays: 'Custom Days',
   subAccount: 'Sub Account',
   unlimited: 'Unlimited',
+  contactUs: 'Contact Us',
 
   theBest: 'The Best',
   proxySubTitle: "proxy you've ever used",
@@ -36,4 +38,15 @@ export default {
   '24_7Support': '24/7 Support',
   '24_7SupportDesc': '24/7 customer support for immediate assistance and queries.',
 
+  weekly: 'Weekly',
+  monthly: 'Monthly',
+  quarterly: 'Quarterly',
+  staticGoodsTitle: 'Select countries and regions',
+  remaining: 'Remaining',
+  cartTitle: 'Summary',
+  clearAll: 'Clear All',
+  totalIP: 'Total IP',
+  totalPrice: 'Total Price',
+  buyNow: 'Buy Now',
+  duration: 'Duration',
 }

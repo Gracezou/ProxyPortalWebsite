@@ -3,22 +3,22 @@
     <div class="group_item">
       <h1>{{ $t('home.staticResidentialTitle') }}</h1>
       <p>{{ $t('home.staticResidentialDesc') }}</p>
-      <el-image />
+      <el-image src="images/static/static-residential.png" />
     </div>
     <div class="group_item">
       <h1>{{ $t('home.staticDataCenterTitle') }}</h1>
       <p>{{ $t('home.staticDataCenterDesc') }}</p>
-      <el-image />
+      <el-image src="images/static/static-data-center.png" />
     </div>
     <div class="group_item">
       <h1>{{ $t('home.rotatingISP') }}</h1>
       <p>{{ $t('home.rotatingISPDesc') }}</p>
-      <el-image />
+      <el-image src="images/static/rotating-isp.png" />
     </div>
   </div>
 </template>
-  
-  
+
+
 <style lang="scss" scoped>
 .static_proxy_group_wrapper {
   width: 1400px;

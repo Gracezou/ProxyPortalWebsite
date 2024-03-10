@@ -2,7 +2,7 @@
   <div class="dynamic_proxy_list_wrapper">
 
     <div class="list_group_box">
-      <div v-for="item in showList" :key="item.size" class="list_group">
+      <div v-for="item in showList" :key="item.planCode" class="list_group">
         <p class="group_title">{{ item.size }}</p>
         <p class="total_box">
           <span>{{ $t('pricing.total') }}:</span>
@@ -20,7 +20,7 @@
           <el-icon color="#18D2AB" size="16"><Select /></el-icon>
           <div class="info">
             <p>{{ $t('pricing.validityPeriod') }}</p>
-            <p v-if="item.size == 'Custom'">{{ $t('pricing.customDays') }}</p>
+            <p v-if="item.type == 'custom'">{{ $t('pricing.customDays') }}</p>
             <div v-else>
               <el-input-number v-model="item.num" controls-position="right" :step="30" />
               <span>{{ $t('pricing.days') }}</span>
@@ -32,7 +32,8 @@
           <span>/{{ $t('pricing.GB') }}</span>
           <span v-if="item.originPrice" class="origin_price">${{ item.originPrice }}</span>
         </p>
-        <el-button type="primary" plain :icon="ShoppingCart">{{ $t('pricing.orderNow') }}</el-button>
+        <el-button type="primary" plain :icon="ShoppingCart" @click="() => submitHandler(item)">{{
+        $t('pricing.orderNow') }}</el-button>
         <el-divider />
         <p class="ul_title">{{ $t('pricing.starterIncludes') }}</p>
         <ul>
@@ -43,9 +44,15 @@
     </div>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
 import { Select, ShoppingCart } from '@element-plus/icons-vue';
+const props = defineProps({
+  data: {
+    type: Array,
+    default: () => []
+  }
+})
 
 const starterList = [
   '500,000 datacenter IPs',
@@ -57,14 +64,33 @@ const starterList = [
   'Invalid IP will not be billed'
 ]
 
+const showList = computed(() => {
+  return props.data.map((item: any) => {
+    return reactive({
+      planCode: item.planCode,
+      type: item.PlanType,
+      size: item.Flow + 'GB',
+      price: item.UnitPrice,
+      originPrice: item.UnitOriginPrice,
+      total: item.TotalPrice,
+      originTotal: item.TotalOriginPrice,
+      extra: item.GiftFlow,
+      starters: starterList,
+      num: item.DefaultDays
+    })
+  })
+})
 
-const showList = ref([
-  { size: '5GB', price: 3, originPrice: undefined, total: 15, originTotal: undefined, starters: starterList, num: 30 },
-  { size: '40GB', price: 2.2, originPrice: 2.5, total: 88, originTotal: 100, starters: starterList, num: 30 },
-  { size: '150GB', price: 1.5, originPrice: 1.8, total: 225, originTotal: 270, starters: starterList, num: 30 },
-  { size: '280GB', price: 1.1, originPrice: 1.5, total: 15, originTotal: undefined, starters: starterList, num: 30 },
-  { size: '1000GB', extra: '100GB', price: 0.8, originPrice: 1.2, total: 816, originTotal: 1224, starters: starterList, num: 30 },
-])
+const emits = defineEmits(['order'])
+
+const submitHandler = (data: any) => {
+  console.log(data)
+  emits('order', {
+    planType: data.type,
+    planCode: data.planCode,
+    rotateDuration: data.num
+  })
+}
 
 </script>
 
@@ -201,4 +227,3 @@ const showList = ref([
 
 }
 </style>
-  

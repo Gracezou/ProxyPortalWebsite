@@ -27,6 +27,7 @@ export default defineNuxtConfig({
   // build modules
   modules: [
     "@element-plus/nuxt",
+    'nuxt-twemoji'
   ],
 
   typescript: {
@@ -34,7 +35,7 @@ export default defineNuxtConfig({
     shim: false,
   },
   build: {
-    transpile: ['vue-i18n']
+    transpile: ['vue-i18n', /echarts/],
   },
   vite: {
     css: {

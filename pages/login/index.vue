@@ -6,7 +6,7 @@
       <el-input class="login_input" v-model="form.email" :placeholder="$t('login.loginEmailPlaceholder')"></el-input>
       <el-input class="login_input" v-model="form.password" :placeholder="$t('login.loginPasswordPlaceholder')"
         show-password></el-input>
-      <p class="forgot">{{ $t('login.forgotPassword') }}</p>
+      <p class="forgot" @click="forgotPasswordHandler">{{ $t('login.forgotPassword') }}</p>
       <el-button class="login_btn" type="primary" @click="loginHandler">{{ $t('login.loginTitle') }}</el-button>
       <div class="tips_group">
         <p class="tips">{{ $t('login.noHaveAccount') }}</p>
@@ -15,10 +15,11 @@
     </div>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
 import http from '@/api/http';
-import { setToken } from '@/api/storage';
+import { jwtParse } from '@/utils/form';
+import { setToken, setUserInfo } from '@/utils/storage';
 import { reactive } from 'vue';
 const form = reactive({
   email: 'galiathusi1i@gmail.com',
@@ -31,21 +32,27 @@ const loginHandler = () => {
   http.post('/v1/website/login', form)
     .then((res: any) => {
       setToken(res.Xtoken)
-      return http.get('/v1/website/current_user_info')
-    })
-    .then((res: any) => {
-      // TODO 解析jwt
-      console.log(res)
+      const userInfo = jwtParse(res.Xtoken)
+      setUserInfo(JSON.stringify(userInfo))
       router.push('/admin/overview')
+    }).finally(() => {
+      loading.value = false
     })
 }
 const router = useRouter()
 const goRegisterHandler = () => {
   router.push('/register')
 }
+
+const forgotPasswordHandler = () => {
+  loading.value = true
+  http.post('/v1/website/forget_password')
+    .then(() => ElMessage.success('邮件发送成功'))
+    .finally(() => loading.value = false)
+}
 </script>
-  
-<style lang="scss" >
+
+<style lang="scss">
 .login_warpper {
   height: calc(100vh - 84px);
   background-image: url('images/login/bg.png');

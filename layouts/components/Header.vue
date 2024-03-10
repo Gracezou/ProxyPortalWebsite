@@ -21,31 +21,31 @@ const gotoPricingHandler = () => router.push('/pricing')
 const proxiesDropdownVisible = ref(false)
 const proxiesItemList = [
   {
-    icon: 'residential',
+    icon: '/icon/home.svg',
     title: 'menu.residential',
     detail: 'menu.residentialDetail',
     link: '/login'
   },
   {
-    icon: 'staticData',
+    icon: '/icon/static.svg',
     title: 'menu.staticData',
     detail: 'menu.staticDataDetail',
     link: '/login'
   },
+  // {
+  //   icon: ' /icon/static.svg',
+  //   title: 'menu.static',
+  //   detail: 'menu.staticDetail',
+  //   link: '/login'
+  // },
   {
-    icon: 'static',
-    title: 'menu.static',
-    detail: 'menu.staticDetail',
-    link: '/login'
-  },
-  {
-    icon: 'http',
+    icon: '/icon/datacenter.svg',
     title: 'menu.http',
     detail: 'menu.httpDetail',
     link: '/login'
   },
   {
-    icon: 'proxiesRotating',
+    icon: '/icon/rotating.svg',
     title: 'menu.proxiesRotating',
     detail: 'menu.rotatingDetail',
     link: '/login'
@@ -55,7 +55,7 @@ const proxiesItemList = [
 const pricingDropDownVisible = ref(false)
 const pricingItemList = [
   {
-    icon: 'resiDential',
+    icon: '/icon/residentail.svg',
     title: 'menu.resiDential',
     detail: 'menu.resiDentialDetail',
     unit: 'menu.day',
@@ -63,23 +63,23 @@ const pricingItemList = [
     link: '/login'
   },
   {
-    icon: 'staticResidential',
+    icon: '/icon/static-pricing.svg',
     title: 'menu.staticResidential',
     detail: 'menu.staticResidentialDetail',
     unit: 'menu.month',
     price: '$5',
     link: '/login'
   },
+  // {
+  //     icon: ' /icon/rotating.svg',
+  //   title: 'menu.rotatingIsp',
+  //   detail: 'menu.rotatingIspDetail',
+  //   unit: 'menu.GB',
+  //   price: '$0.7',
+  //   link: '/login'
+  // },
   {
-    icon: 'rotatingIsp',
-    title: 'menu.rotatingIsp',
-    detail: 'menu.rotatingIspDetail',
-    unit: 'menu.GB',
-    price: '$0.7',
-    link: '/login'
-  },
-  {
-    icon: 'dedicatedDatacenter',
+    icon: '/icon/datacenter-prcing.svg',
     title: 'menu.dedicatedDatacenter',
     detail: 'menu.dedicatedDatacenterDetail',
     unit: 'menu.ip',
@@ -87,7 +87,7 @@ const pricingItemList = [
     link: '/login'
   },
   {
-    icon: 'rotatingDatacenter',
+    icon: '/icon/rotating-pricing.svg',
     title: 'menu.rotatingDatacenter',
     detail: 'menu.rotatingDatacenterDetail',
     unit: 'menu.GB',
@@ -99,26 +99,26 @@ const pricingItemList = [
 const getProxiesDropDownVisible = ref(false)
 const getProxiesItemList = [
   {
-    icon: 'api',
+    icon: '/icon/api.svg',
     title: 'menu.api',
     detail: 'menu.apiDetail',
     link: '/login'
   },
   {
-    icon: 'user',
+    icon: '/icon/user.svg',
     title: 'menu.user',
     detail: 'menu.userDetail',
     link: '/login'
   },
   {
-    icon: 'global',
+    icon: '/icon/global.svg',
     title: 'menu.global',
     detail: 'menu.globalDetail',
     link: '/login'
   },
 ]
 const getProxiesLastItem = {
-  icon: 'rubyProxy',
+  icon: '/icon/chrome.svg',
   title: 'menu.rubyProxy',
   detail: 'menu.rubyProxyDetail',
   link: '/login'
@@ -144,7 +144,9 @@ const getProxiesLastItem = {
                   <el-divider />
                   <div class="content">
                     <div class="dropdown_item hover" v-for="p in proxiesItemList" :key="p.title">
-                      <div class="icon_image"></div>
+                      <div class="icon_image">
+                        <el-image :src="p.icon" />
+                      </div>
                       <div class="dropdown_item_content">
                         <p class="dropdown_item_title">{{ $t(p.title) }}</p>
                         <p class="dropdown_item_detail">{{ $t(p.detail) }}</p>
@@ -177,7 +179,9 @@ const getProxiesLastItem = {
                   <div class="content">
                     <div class="dropdown_item" v-for="pricing in pricingItemList" :key="pricing.title"
                       @click="gotoPricingHandler">
-                      <div class="icon_image"></div>
+                      <div class="icon_image">
+                        <el-image :src="pricing.icon" />
+                      </div>
                       <div class="dropdown_item_content">
                         <p class="dropdown_item_title">{{ $t(pricing.title) }}</p>
                         <p class="dropdown_item_detail">{{ $t(pricing.detail) }}</p>
@@ -214,17 +218,20 @@ const getProxiesLastItem = {
                   <div class="content">
                     <div>
                       <div class="dropdown_item hover" v-for="getProxy in getProxiesItemList" :key="getProxy.title">
-                        <div class="icon_image"></div>
+                        <div class="icon_image">
+                          <el-image :src="getProxy.icon" />
+                        </div>
                         <div class="dropdown_item_content">
                           <p class="dropdown_item_title">{{ $t(getProxy.title) }}</p>
                           <p class="dropdown_item_detail">{{ $t(getProxy.detail) }}</p>
                         </div>
                       </div>
                     </div>
-
                     <div>
                       <div class="dropdown_item hover">
-                        <div class="icon_image"></div>
+                        <div class="icon_image">
+                          <el-image :src="getProxiesLastItem.icon" />
+                        </div>
                         <div class="dropdown_item_content">
                           <p class="dropdown_item_title">{{ $t(getProxiesLastItem.title) }}</p>
                           <p class="dropdown_item_detail">{{ $t(getProxiesLastItem.detail) }}</p>
@@ -232,7 +239,6 @@ const getProxiesLastItem = {
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </transition>
@@ -263,8 +269,9 @@ const getProxiesLastItem = {
 
         <div class="login_wrapper">
           <el-button link @click="goLoginHandler">{{ $t('menu.login') }}</el-button>
-          <el-button size="large" class="register" type="primary" @click="goRegisterHandler">{{ $t('menu.register')
-          }}</el-button>
+          <el-button size="large" class="register" type="primary" @click="goRegisterHandler">
+            {{ $t('menu.register') }}
+          </el-button>
         </div>
       </el-header>
     </el-affix>
@@ -393,6 +400,7 @@ const getProxiesLastItem = {
     display: flex;
     flex-wrap: wrap;
     box-sizing: border-box;
+    width: 1000px;
   }
 
   .dropdown_title_divider {
@@ -424,6 +432,7 @@ const getProxiesLastItem = {
     margin-right: 6px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    padding: 5px;
   }
 
   .dropdown_item_content {
