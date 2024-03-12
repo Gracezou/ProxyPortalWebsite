@@ -26,7 +26,7 @@
 
   </div>
 </template>
-  
+
 <script setup lang='ts'>
 import type { TabsPaneContext } from 'element-plus';
 const activeTab = ref('commerce');
@@ -52,8 +52,8 @@ const gotoDetailHandler = () => {
   return router.push('/login');
 }
 </script>
-  
-<style lang="scss" >
+
+<style lang="scss">
 .ruby_proxy_wrapper {
   width: 100%;
   height: 770px;
@@ -93,7 +93,7 @@ p {
 }
 
 .ruby_proxy_tabs {
-  --el-tabs-header-height: 200px;
+  --el-tabs-header-height: 200px !important;
 
   .el-tabs__nav {
     display: flex;
@@ -113,8 +113,8 @@ p {
   }
 
   .el-image {
-    width: 135px;
-    height: 135px;
+    width: 150px;
+    height: 150px;
   }
 }
 

@@ -177,7 +177,7 @@ const getProxiesLastItem = {
                     </div>
                   </div>
                   <div class="content">
-                    <div class="dropdown_item" v-for="pricing in pricingItemList" :key="pricing.title"
+                    <div class="dropdown_item hover" v-for="pricing in pricingItemList" :key="pricing.title"
                       @click="gotoPricingHandler">
                       <div class="icon_image">
                         <el-image :src="pricing.icon" />
@@ -426,7 +426,7 @@ const getProxiesLastItem = {
   transition: background-color 0.3s ease;
 
   .icon_image {
-    background-color: #5DBCE5;
+    background-color: #e9f4f9;
     height: 40px;
     width: 40px;
     margin-right: 6px;
@@ -459,7 +459,7 @@ const getProxiesLastItem = {
 }
 
 .dropdown_item.hover:hover {
-  background-color: #D7D7D7;
+  background-color: #e7e7e7;
 
   .icon_image {
     background-color: #FFF;

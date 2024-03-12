@@ -1,5 +1,8 @@
 <template>
   <div class="purchase_wrapper" v-loading="loading">
+    <div class="allow_list_header">
+      <h1>{{ $t('dynamic.history.title') }}</h1>
+    </div>
     <DynamicProxyListComp :personal="dynamicPersonalList" :enterprise="dynamicEnterpriseList"
       @order="createOrderHandler" />
     <CreateOrder v-model="createOrderVisible" :data="currentProduct" />
@@ -51,8 +54,22 @@ const createOrderHandler = (data: any) => {
 <style lang="scss">
 .purchase_wrapper {
   box-sizing: border-box;
-  padding: 20px;
   background-color: rgba(233, 244, 249, 1);
+
+  .allow_list_header {
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-bottom: 1px solid #D7D7D7;
+    margin-bottom: 20px;
+
+    h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333333;
+    }
+  }
 
   .list_group {
     border: 1px solid rgba(255, 255, 255, 1);

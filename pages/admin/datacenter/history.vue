@@ -1,5 +1,5 @@
 <template>
-  <div class="allow_list_wrapper">
+  <div class="purchase_wrapper">
     <div class="allow_list_header">
       <h1>{{ $t('datacenter.history.title') }}</h1>
     </div>
@@ -96,7 +96,7 @@ const changePageHandler = (val: number) => {
 </script>
 
 <style lang="scss" scoped>
-.allow_list_wrapper {
+.purchase_wrapper {
   .allow_list_header {
     padding: 0 40px;
     display: flex;
