@@ -3,16 +3,16 @@
     <div class="allow_list_header">
       <h1>{{ $t('rotating.history.title') }}</h1>
     </div>
-    <RotatingDataComp :data="rotatingDataCenterList" @order="createOrderHandler" />
+    <DynamicProxyListComp :data="rotatingDataCenterList" @order="createOrderHandler" />
     <CreateOrder v-model="createOrderVisible" :data="currentProduct" />
   </div>
 </template>
 
 <script setup lang='ts'>
 import http from '~/api/http';
+import DynamicProxyListComp from '../../pricing/components/DynamicProxyList.vue';
 import CreateOrder from '../components/CreateOrder.vue';
 
-import RotatingDataComp from '../../pricing/components/RotatingData.vue';
 onMounted(() => {
   getProductData()
 })
@@ -21,10 +21,9 @@ const rotatingDataCenterList = ref([])
 const getProductData = () => {
   loading.value = true
   http.get('/v1/website/buy_package')
-    .then((res) => {
+    .then((res: any) => {
       console.log(res)
-      const data = res.data
-      rotatingDataCenterList.value = data.RotatingDatacenterProxy
+      rotatingDataCenterList.value = res.RotatingDatacenter
     })
     .catch((err) => {
       console.log(err)

@@ -3,10 +3,15 @@
     <div class="register_box">
       <div class="register_title">{{ $t('register.registerTitle') }}</div>
       <div class="register_sub_title">{{ $t('register.registerSubTitle') }}</div>
-      <el-input class="register_input" v-model="form.username"
-        :placeholder="$t('register.registerEmailPlaceholder')"></el-input>
-      <el-input class="register_input" v-model="form.password" :placeholder="$t('register.registerPasswordPlaceholder')"
-        show-password></el-input>
+      <el-form ref="ruleFormRef" :model="form" :rules="rules" status-icon>
+        <el-form-item prop="email">
+          <el-input class="login_input" v-model="form.email" :placeholder="$t('register.registerEmailPlaceholder')" />
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input class="login_input" v-model="form.password"
+            :placeholder="$t('register.registerPasswordPlaceholder')" show-password />
+        </el-form-item>
+      </el-form>
       <div class="police_box">
         <el-checkbox size="large" v-model="checked"></el-checkbox>
         <p>
@@ -16,7 +21,7 @@
           <span @click="gotoRefundPolicy"> {{ $t('register.refundPolicy') }}</span>
         </p>
       </div>
-      <el-button class="register_btn" type="primary" @click="registerHandler">
+      <el-button v-loading="loading" class="register_btn" type="primary" :disabled="!checked" @click="registerHandler">
         {{ $t('register.createAccount') }}
       </el-button>
       <div class="tips_group">
@@ -26,16 +31,45 @@
     </div>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
+import http from '@/api/http';
+import type { FormInstance, FormRules } from 'element-plus';
 import { reactive } from 'vue';
 const form = reactive({
-  username: '',
+  email: '',
   password: ''
 })
+
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+  email: [
+    { required: true, message: 'Please input email', trigger: 'blur' },
+    { type: 'email', message: 'Please input correct email', trigger: ['blur', 'change'] }
+  ],
+  password: [
+    { required: true, message: 'Please input password', trigger: 'blur' },
+    { min: 6, message: 'Length should be 6', trigger: 'blur' }
+  ]
+})
+const loading = ref(false)
 const checked = ref(false)
 const registerHandler = () => {
   console.log(form)
+  if (!ruleFormRef.value) return
+  ruleFormRef.value.validate((valid) => {
+    if (!valid) return
+    loading.value = true
+    http.post('/v1/website/sign_in', form).then((res: any) => {
+      console.log(res, 'login')
+      setToken(res.Xtoken)
+      const userInfo = jwtParse(res.Xtoken)
+      setUserInfo(JSON.stringify(userInfo))
+      router.push('/admin/overview')
+    }).finally(() => {
+      loading.value = false
+    })
+  })
 }
 const router = useRouter()
 const gotoLoginHandler = () => router.push('/login')
@@ -43,14 +77,21 @@ const gotoTermsAndConditions = () => router.push('/help/terms')
 const gotoRefundPolicy = () => router.push('/help/refund')
 
 </script>
-  
-<style lang="scss" >
+
+<style lang="scss">
 .register_warpper {
   height: calc(100vh - 84px);
-  background-image: url('images/login/bg.png');
-  background-repeat: no-repeat;
-  background-size: cover;
+  background: url('~/assets/image/login/bg.png') no-repeat center / 100% 100%;
   position: relative;
+
+  p.forgot {
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    color: #316BFF;
+    margin-top: 10px;
+    margin-bottom: 48px;
+  }
 
   .el-button {
     width: 370px;
@@ -114,10 +155,8 @@ const gotoRefundPolicy = () => router.push('/help/refund')
   color: #7F7F7F;
 }
 
-.register_input {
+.login_input {
   width: 100%;
-  margin-bottom: 20px;
-  padding: 0 8px;
   box-sizing: border-box;
   border-radius: 10px;
   height: 48px;

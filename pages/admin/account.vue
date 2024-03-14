@@ -17,17 +17,18 @@
           header-cell-class-name="header_cell_custom">
           <el-table-column prop="account" :align="'center'" :label="$t('subAccount.userName')" />
           <el-table-column prop="state" :label="$t('subAccount.status')" :align="'center'">
-
             <template #default="scope">
               <el-text v-if="scope.row.state == 1" type="success">Active</el-text>
               <el-text v-else-if="scope.row.state == 0" type="danger">Disabled</el-text>
               <el-text v-else type="info">Unknown</el-text>
             </template>
           </el-table-column>
-          <el-table-column prop="limit_flow" :label="$t('subAccount.trafficLimit')" :align="'center'" />
+          <el-table-column prop="limit_flow" :label="$t('subAccount.trafficLimit')" :align="'center'"
+            :formatter="(__, _, value) => parseInt(value).toFixed(2)" />
           <el-table-column prop="consumed_flow" :label="$t('subAccount.trafficUsed')" :align="'center'" />
           <el-table-column prop="remark" :label="$t('subAccount.remark')" :align="'center'" />
-          <el-table-column prop="create_time" :label="$t('subAccount.addTime')" :align="'center'" />
+          <el-table-column prop="create_time" :label="$t('subAccount.addTime')" :align="'center'"
+            :formatter="(__, _, value) => formatShowTime(value)" />
           <el-table-column :label="$t('subAccount.operate')" :align="'center'">
 
             <template #default="scope">
@@ -81,6 +82,7 @@
 import { Delete, Edit, Lock } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import http from '~/api/http';
+import { formObjectInit, formatShowTime } from '~/utils/form';
 const tableData = ref([])
 const loading = ref(false)
 const pagination = reactive({

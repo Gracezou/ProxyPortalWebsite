@@ -4,8 +4,9 @@
       <p class="sub_title">{{ $t('home.bestValueSubTitle') }}</p>
       <h1>{{ $t('home.bestValueTitle') }}</h1>
       <p class="dynamic_proxy_desc">{{ $t('home.bestValueDesc') }}</p>
-      <el-button size="large" class="register" type="primary" @click="gotoDetailHandler">{{ $t('home.startNow')
-      }}</el-button>
+      <el-button size="large" class="register" type="primary" @click="gotoDetailHandler">
+        {{ $t('home.startNow') }}
+      </el-button>
       <div class="tips_box">
         <div class="tips_item">
           <el-icon color="#316BFF" size="22"><Select /></el-icon>
@@ -17,7 +18,7 @@
         </div>
       </div>
     </div>
-    <img src="~/assets/image/dynamic-proxy.gif" alt="">
+    <img src="~/assets/image/dynamic.gif" alt="">
   </div>
 </template>
 <script setup lang='ts'>
@@ -28,7 +29,7 @@ const gotoDetailHandler = () => {
   return router.push('/login');
 }
 </script>
-  
+
 <style lang="scss" scoped>
 .dynamic_proxy_wrapper {
   padding: 20px 40px;
@@ -59,6 +60,7 @@ const gotoDetailHandler = () => {
     color: #D41010;
     font-size: 15px;
     line-height: 24px;
+    font-weight: 600;
   }
 
   h1 {

@@ -1,9 +1,19 @@
+@font-face {
+  font-family: "Poppins";
+  src: url(../font/Poppins-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Poppins Medium";
+  src: url(../font/Poppins-Medium.ttf);
+}
+
 html,
 body,
 #app {
   margin: 0;
   padding: 0;
-  font-family: "Microsoft YaHei";
+  font-family: "Poppins";
   min-width: 1400px;
 }
 

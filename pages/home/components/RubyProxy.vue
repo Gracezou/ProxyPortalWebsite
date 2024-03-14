@@ -93,7 +93,7 @@ p {
 }
 
 .ruby_proxy_tabs {
-  --el-tabs-header-height: 200px !important;
+  --el-tabs-header-height: 220px !important;
 
   .el-tabs__nav {
     display: flex;
@@ -106,10 +106,11 @@ p {
   }
 
   .tab_text {
+    height: 54px;
     line-height: 27px;
     color: #081D4D;
     font-size: 18px;
-    padding-bottom: 26px;
+    padding-bottom: 20px;
   }
 
   .el-image {
@@ -126,6 +127,11 @@ p {
   display: flex;
   box-sizing: border-box;
   align-items: center;
+
+  .el-carousel {
+    border-radius: 20px;
+    overflow: hidden;
+  }
 
   .ruby_proxy_carousel_info {
     flex: 1;

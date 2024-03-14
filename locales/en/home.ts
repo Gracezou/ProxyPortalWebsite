@@ -87,7 +87,7 @@ export default {
   solveProblemQ6: 'How much are residential proxies?',
   solveProblemA6: 'Our plans start at $0.7/GB with up to an additional 200GB free. See prices section for moredetails.',
   solveProblemQ7: 'What features will I find in the dashboard?',
-  solveProblemA7: `You will be able to: \nView your daily usage statistics. \nManage sub-users for specific goals.\nmanagement endpoint \nMore… \nNot using LunaProxy yet? \nGet your account here.`,
+  solveProblemA7: `You will be able to: \nView your daily usage statistics. \nManage sub-users for specific goals.\nmanagement endpoint \nMore… \nNot using RubyProxy yet? \nGet your account here.`,
   moreFAQ: 'More FAQ',
 
 }

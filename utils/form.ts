@@ -39,11 +39,14 @@ export const formObjectInit = (obj: Record<string, number | string | undefined> 
 }
 
 
-export function formatShowTime(dateStr: string): string {
-  const date = new Date(dateStr)
+export function formatShowTime(dateTime: number): string {
+  const date = new Date(dateTime * 1000)
+  const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`
+  const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`
   const hours = date.getHours() > 9 ? date.getHours() : `0${date.getHours()}`
   const min = date.getMinutes() > 9 ? date.getMinutes() : `0${date.getMinutes()}`
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${hours}:${min}`
+  const sec = date.getSeconds() > 9 ? date.getSeconds() : `0${date.getSeconds()}`
+  return `${date.getFullYear()}-${month}-${day} ${hours}:${min}:${sec}`
 }
 
 // jwt 令牌解析

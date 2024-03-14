@@ -1,7 +1,28 @@
 <script setup lang="ts">
+import { getToken, getUserInfo, removeToken, removeUserInfo } from '@/utils/storage';
 import { ArrowDown } from '@element-plus/icons-vue';
 import { useI18n } from 'vue-i18n';
 import LogoComp from '~/layouts/components/LogoComp.vue';
+
+const isLogin = computed(() => {
+  return getToken() && getUserInfo();
+});
+
+const username = computed(() => {
+  const userStr = getUserInfo();
+  if (userStr) {
+    const user = JSON.parse(userStr)
+    return user.username || user.user_email
+  }
+  return '';
+});
+const router = useRouter()
+const goOverviewHandler = () => router.push('/admin/overview');
+const logoutHandler = () => {
+  removeToken()
+  removeUserInfo()
+  router.replace('/login')
+}
 
 const { locale } = useI18n()
 const handleChange = (val: string) => {
@@ -9,7 +30,6 @@ const handleChange = (val: string) => {
   const cookieLang = useCookie('lang')
   cookieLang.value = locale.value
 }
-const router = useRouter()
 // to home page
 const goHomeHandler = () => router.push('/')
 // to login page
@@ -55,7 +75,7 @@ const proxiesItemList = [
 const pricingDropDownVisible = ref(false)
 const pricingItemList = [
   {
-    icon: '/icon/residentail.svg',
+    icon: '/icon/global.svg',
     title: 'menu.resiDential',
     detail: 'menu.resiDentialDetail',
     unit: 'menu.day',
@@ -63,7 +83,7 @@ const pricingItemList = [
     link: '/login'
   },
   {
-    icon: '/icon/static-pricing.svg',
+    icon: '/icon/static-price.svg',
     title: 'menu.staticResidential',
     detail: 'menu.staticResidentialDetail',
     unit: 'menu.month',
@@ -79,7 +99,7 @@ const pricingItemList = [
   //   link: '/login'
   // },
   {
-    icon: '/icon/datacenter-prcing.svg',
+    icon: '/icon/database.svg',
     title: 'menu.dedicatedDatacenter',
     detail: 'menu.dedicatedDatacenterDetail',
     unit: 'menu.ip',
@@ -87,7 +107,7 @@ const pricingItemList = [
     link: '/login'
   },
   {
-    icon: '/icon/rotating-pricing.svg',
+    icon: '/icon/database-rotaing.svg',
     title: 'menu.rotatingDatacenter',
     detail: 'menu.rotatingDatacenterDetail',
     unit: 'menu.GB',
@@ -267,7 +287,14 @@ const getProxiesLastItem = {
           </template>
         </el-dropdown>
 
-        <div class="login_wrapper">
+        <div class="login_wrapper" v-if="isLogin">
+          <el-button link @click="goOverviewHandler">{{ username }}</el-button>
+          <el-button size="large" class="register" type="primary" @click="logoutHandler">
+            {{ $t('login.logout') }}
+          </el-button>
+        </div>
+
+        <div class="login_wrapper" v-else>
           <el-button link @click="goLoginHandler">{{ $t('menu.login') }}</el-button>
           <el-button size="large" class="register" type="primary" @click="goRegisterHandler">
             {{ $t('menu.register') }}

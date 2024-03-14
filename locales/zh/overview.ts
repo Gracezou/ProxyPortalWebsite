@@ -1,18 +1,19 @@
 
 export default {
-  title: "Overview",
-  dynamicProxy: 'Dynamic Residential Proxy',
-  rotatingDataCenterProxy: 'Rotating Datacenter Proxy',
-  rotatingIspProxy: 'Rotating ISP Proxy',
-  staticResidentialProxy: 'Static Residential Proxy',
-  staticDataCenterProxy: 'Static Datacenter Proxy',
+  "title": "總覽",
+  "dynamicProxy": "動態住宅代理",
+  "rotatingDataCenterProxy": "輪換數據中心代理",
+  "rotatingIspProxy": "輪換ISP代理",
+  "staticResidentialProxy": "靜態住宅代理",
+  "staticDataCenterProxy": "靜態數據中心代理",
 
-  registrationTime: 'Registration Time',
-  changePassword: 'Change Password',
-  startUsing: 'Start Using',
-  recharge: 'Recharge',
-  startFrom: 'Starts from',
-  starterInclude: 'Starter includes',
-  mainAccountTraffic: 'Main Account Traffic',
-  subAccountTraffic: 'Sub-account Traffic',
+  "registrationTime": "註冊時間",
+  "changePassword": "修改密碼",
+  "startUsing": "開始使用",
+  "recharge": "充值",
+  "startFrom": "開始於",
+  "starterInclude": "入門版包括",
+  "mainAccountTraffic": "主賬戶流量",
+  "subAccountTraffic": "子賬戶流量"
 }
+

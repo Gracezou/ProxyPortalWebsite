@@ -7,12 +7,13 @@
       <p class="pricing_list_desc">{{ $t('pricing.pricingSubTitle') }}</p>
       <el-radio-group class="pricing_type_group" v-model="pricingType" size="large" fill="#fff" text-color="#4D4206">
         <el-radio-button v-for="typeItem in typeOptions" :key="typeItem.value" :label="$t(typeItem.label)"
-          :value="typeItem.value" />
+          :value="typeItem.value">
+        </el-radio-button>
       </el-radio-group>
-      <!-- <DynamicProxyListComp v-if="pricingType === PricingTypeEnums.rotatingIspProxy" /> -->
-      <DynamicProxyListComp v-if="pricingType === PricingTypeEnums.dynamicProxy" :personal="dynamicPersonalList"
-        :enterprise="dynamicEnterpriseList" @order="jumpHandler(PricingTypeEnums.dynamicProxy)" />
-      <RotatingDataComp v-if="pricingType === PricingTypeEnums.rotatingDataCenterProxy" :data="rotatingDataCenterList"
+      <DynamicProxyListComp v-if="pricingType === PricingTypeEnums.dynamicProxy" :data="dynamicProxyList"
+        :dynamic-type="true" :starter-list="dynamicStarterList" @order="jumpHandler(PricingTypeEnums.dynamicProxy)" />
+      <DynamicProxyListComp v-if="pricingType === PricingTypeEnums.rotatingDataCenterProxy"
+        :starter-list="rotatingDataCenterStarterList" :data="rotatingDataCenterList"
         @order="jumpHandler(PricingTypeEnums.rotatingDataCenterProxy)" />
       <StaticProxy v-if="pricingType === PricingTypeEnums.staticResidentialProxy" :data="staticResidentialProxyData"
         @order="jumpHandler(PricingTypeEnums.staticResidentialProxy)" />
@@ -23,9 +24,9 @@
 </template>
 
 <script setup lang='ts'>
+import { getToken } from '@/utils/storage';
 import http from '~/api/http';
 import DynamicProxyListComp from './DynamicProxyList.vue';
-import RotatingDataComp from './RotatingData.vue';
 import StaticProxy from './StaticProxy.vue';
 
 enum PricingTypeEnums {
@@ -45,25 +46,40 @@ const typeOptions = [
 const pricingType = ref(PricingTypeEnums.dynamicProxy)
 const loading = ref(false)
 const rotatingDataCenterList = ref([])
+const rotatingDataCenterStarterList = [
+  '500,000 datacenter IPs',
+  '220+ regions and countries',
+  'HTTP/HTTPS.',
+  'Traffic history monitoring',
+  'Bulk proxies generation',
+  '99.9% uptime.',
+  'Invalid IP will not be billed'
+]
 
-const dynamicPersonalList = ref([])
-const dynamicEnterpriseList = ref([])
+const dynamicProxyList = ref([])
+const dynamicStarterList = [
+  'US, BR preferred.',
+  'City-level precision.',
+  'HTTP/HTTPS.',
+  'Unlimited access.',
+  'IP lasts for 90 minutes',
+  '99.9% uptime.',
+  'Invalid IP will not be billed'
+]
 
 const staticResidentialProxyData = ref({})
 const staticDataCenterProxyData = ref({})
 const getProductData = () => {
   loading.value = true
   http.get('/v1/website/buy_package')
-    .then((res) => {
+    .then((res: any) => {
       console.log(res)
-      const data = res.data
-      rotatingDataCenterList.value = data.RotatingDatacenterProxy
+      rotatingDataCenterList.value = res.RotatingDatacenter
 
-      dynamicPersonalList.value = data.DynamicResidentialProxy.PersonalPlans
-      dynamicEnterpriseList.value = data.DynamicResidentialProxy.EnterprisePlans
+      dynamicProxyList.value = res.DynamicResidential
 
-      staticResidentialProxyData.value = data.StaticResidentialProxy
-      staticDataCenterProxyData.value = data.StaticDatacenterProxy
+      staticResidentialProxyData.value = res.StaticResidential
+      staticDataCenterProxyData.value = res.StaticDatacenter
 
     })
     .catch((err) => {
@@ -140,6 +156,7 @@ const jumpHandler = (type: PricingTypeEnums) => {
 .pricing_type_group {
   width: 1584px;
   margin-bottom: 25px;
+  --el-border-radius-base: 8px;
 }
 </style>
 <style lang="scss">
@@ -159,6 +176,11 @@ const jumpHandler = (type: PricingTypeEnums) => {
     border-bottom-width: 2px;
     border-right-width: 0;
     background-color: transparent;
+    --el-border-color: #fff;
+
+    &:hover {
+      color: #4D4206;
+    }
   }
 
   .el-radio-button:last-child .el-radio-button__inner {

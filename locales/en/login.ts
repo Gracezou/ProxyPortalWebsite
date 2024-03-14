@@ -6,4 +6,5 @@ export default {
   forgotPassword: 'Forgot your Password?',
   noHaveAccount: "Don't have an account?",
   signUpNow: 'Sign Up Now!',
+  "logout": "Logout",
 }

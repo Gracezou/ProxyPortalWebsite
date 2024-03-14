@@ -5,7 +5,7 @@
     </div>
     <div class="allow_list_body">
       <div class="user_info_wrapper">
-        <el-avatar :size="100" :src="userInfo.circleUrl" />
+        <div class="avatar"></div>
         <div class="user_info">
           <p>{{ userInfo.email }}</p>
           <p>{{ userInfo.username }}</p>
@@ -26,8 +26,12 @@
                     <PieChart :option="options" />
                   </div>
                   <div class="button_wrapper">
-                    <el-button type="primary" size="large">{{ $t('overview.startUsing') }}</el-button>
-                    <el-button type="primary" plain size="large">{{ $t('overview.recharge') }}</el-button>
+                    <el-button type="primary" size="large" @click="jumpApiHandler(tab.label.split('.')[1])">
+                      {{ $t('overview.startUsing') }}
+                    </el-button>
+                    <el-button type="primary" plain size="large" @click="jumpHandler(tab.label.split('.')[1])">
+                      {{ $t('overview.recharge') }}
+                    </el-button>
                   </div>
                 </div>
                 <div class="product_order">
@@ -74,7 +78,7 @@
 </template>
 
 <script setup lang='ts'>
-import { getUserInfo } from '@/utils/storage';
+import { getToken, getUserInfo } from '@/utils/storage';
 import { ShoppingCart } from '@element-plus/icons-vue';
 import { onMounted, reactive, ref } from 'vue';
 import http from '~/api/http';
@@ -102,7 +106,6 @@ const options = reactive<any>({})
 const countValue = ref(0)
 const changeTabHandler = (tab: any) => {
   const currentTab = tabsList.value[tab.index]
-  // resetData()
   countValue.value = 0
   return currentTab.handler()
 }
@@ -211,6 +214,13 @@ const jumpHandler = (type: string) => {
   return router.push('/login')
 }
 
+const jumpApiHandler = (type: string) => {
+  // if (getToken()) {
+  router.push('/admin/api?type=' + type)
+  // }
+  // return router.push('/login')
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -249,6 +259,11 @@ const jumpHandler = (type: string) => {
   padding: 25px 30px;
   width: 300px;
   margin-right: 25px;
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
 
   .user_info {
     border-top: 1px solid #D7D7D7;

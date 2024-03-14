@@ -10,6 +10,7 @@
 
 <script setup lang='ts'>
 import http from '~/api/http';
+import StaticProxy from '../../pricing/components/StaticProxy.vue';
 import CreateOrder from '../components/CreateOrder.vue';
 
 onMounted(() => {
@@ -21,10 +22,9 @@ const staticDataCenterProxyData = ref({})
 const getProductData = () => {
   loading.value = true
   http.get('/v1/website/buy_package')
-    .then((res) => {
+    .then((res: any) => {
       console.log(res)
-      const data = res.data
-      staticDataCenterProxyData.value = data.StaticResidentialProxy
+      staticDataCenterProxyData.value = res.StaticResidential
     })
     .catch((err) => {
       console.log(err)

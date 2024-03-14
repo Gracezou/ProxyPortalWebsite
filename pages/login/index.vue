@@ -3,9 +3,15 @@
     <div class="login_box" v-loading="loading">
       <div class="login_title">{{ $t('login.loginTitle') }}</div>
       <div class="login_sub_title">{{ $t('login.loginSubTitle') }}</div>
-      <el-input class="login_input" v-model="form.email" :placeholder="$t('login.loginEmailPlaceholder')"></el-input>
-      <el-input class="login_input" v-model="form.password" :placeholder="$t('login.loginPasswordPlaceholder')"
-        show-password></el-input>
+      <el-form ref="ruleFormRef" :model="form" :rules="rules" status-icon>
+        <el-form-item prop="email">
+          <el-input class="login_input" v-model="form.email" :placeholder="$t('login.loginEmailPlaceholder')" />
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input class="login_input" v-model="form.password" :placeholder="$t('login.loginPasswordPlaceholder')"
+            show-password />
+        </el-form-item>
+      </el-form>
       <p class="forgot" @click="forgotPasswordHandler">{{ $t('login.forgotPassword') }}</p>
       <el-button class="login_btn" type="primary" @click="loginHandler">{{ $t('login.loginTitle') }}</el-button>
       <div class="tips_group">
@@ -20,17 +26,32 @@
 import http from '@/api/http';
 import { jwtParse } from '@/utils/form';
 import { setToken, setUserInfo } from '@/utils/storage';
+import type { FormInstance, FormRules } from 'element-plus';
 import { reactive } from 'vue';
 const form = reactive({
-  email: 'galiathusi1i@gmail.com',
-  password: 'password123123'
+  email: '',
+  password: ''
+})
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+  email: [
+    { required: true, message: 'Please input email', trigger: 'blur' },
+    { type: 'email', message: 'Please input correct email', trigger: ['blur', 'change'] }
+  ],
+  password: [
+    { required: true, message: 'Please input password', trigger: 'blur' },
+    { min: 6, message: 'Length should be 6', trigger: 'blur' }
+  ]
 })
 const loading = ref(false)
 const loginHandler = () => {
   console.log(form)
-  loading.value = true
-  http.post('/v1/website/login', form)
-    .then((res: any) => {
+  if (!ruleFormRef.value) return
+  ruleFormRef.value.validate((valid) => {
+    if (!valid) return
+    loading.value = true
+    http.post('/v1/website/login', form).then((res: any) => {
+      console.log(res, 'login')
       setToken(res.Xtoken)
       const userInfo = jwtParse(res.Xtoken)
       setUserInfo(JSON.stringify(userInfo))
@@ -38,6 +59,8 @@ const loginHandler = () => {
     }).finally(() => {
       loading.value = false
     })
+  })
+
 }
 const router = useRouter()
 const goRegisterHandler = () => {
@@ -55,9 +78,7 @@ const forgotPasswordHandler = () => {
 <style lang="scss">
 .login_warpper {
   height: calc(100vh - 84px);
-  background-image: url('images/login/bg.png');
-  background-repeat: no-repeat;
-  background-size: cover;
+  background: url('~/assets/image/login/bg.png') no-repeat center / 100% 100%;
   position: relative;
 
   p.forgot {
@@ -65,7 +86,8 @@ const forgotPasswordHandler = () => {
     font-size: 14px;
     cursor: pointer;
     color: #316BFF;
-    margin-bottom: 58px;
+    margin-top: 10px;
+    margin-bottom: 48px;
   }
 
   .el-button {
@@ -110,8 +132,6 @@ const forgotPasswordHandler = () => {
 
 .login_input {
   width: 100%;
-  margin-bottom: 20px;
-  padding: 0 8px;
   box-sizing: border-box;
   border-radius: 10px;
   height: 48px;

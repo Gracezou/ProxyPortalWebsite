@@ -44,7 +44,7 @@
       line-height: 27px;
       margin-top: 14px;
       margin-bottom: 23px;
-      font-weight: normal;
+      font-weight: 600;
     }
 
     p {

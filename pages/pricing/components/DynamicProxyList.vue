@@ -1,44 +1,59 @@
 <template>
   <div class="dynamic_proxy_list_wrapper">
-    <el-radio-group class="dynamic_proxy_type_group" v-model="planType" size="large" fill="#fff" text-color="#4D4206">
-      <el-radio-button :label="$t('pricing.personal')" value="personal" />
-      <el-radio-button :label="$t('pricing.enterprise')" value="enterprise" />
+    <el-radio-group v-if="planTypeTabShow" class="dynamic_proxy_type_group" v-model="planType" size="large" fill="#fff"
+      text-color="#4D4206" @change="changePlanTypeHandler">
+      <el-radio-button v-for="plan in planTypeList" :label="plan" :value="plan" />
     </el-radio-group>
 
     <div class="list_group_box">
-      <div v-for="item in showList" :key="item.planCode" class="list_group">
-        <p class="group_title">{{ item.type == 'custom' ? 'Custom +' : item.size }}</p>
+      <div v-for="(item, index) in showList" :key="item.planCode" class="list_group"
+        :class="currentIndex === index ? 'active' : ''" @click="() => changeCurrentIndexHandler(index)">
+        <p class="group_title">{{ item.isCustom ? 'Custom +' : item.size }}</p>
         <p class="total_box">
           <span>{{ $t('pricing.total') }}:</span>
-          <span class="total_price">${{ item.total || '?' }}</span>
+          <span class="total_price">${{ item.isCustom ? '?' : item.total(item) }}</span>
           <span v-if="item.originTotal" class="origin_price">${{ item.originTotal }}</span>
         </p>
         <div class="info_box">
           <el-icon color="#18D2AB" size="16"><Select /></el-icon>
-          <div class="info">
+          <div class="info" v-if="dynamicType">
             <p>200M+</p>
             <p>{{ $t('pricing.stableResidential') }}</p>
           </div>
+          <div class="info" v-else>
+            <p>{{ $t('pricing.subAccount') }}</p>
+            <p>{{ $t('pricing.unlimitedIpAmount') }}</p>
+          </div>
         </div>
         <div class="info_box">
-          <el-icon color="#18D2AB" size="16"><Select /></el-icon>+
+          <el-icon color="#18D2AB" size="16"><Select /></el-icon>
           <div class="info">
             <p>{{ $t('pricing.validityPeriod') }}</p>
-            <p v-if="item.type == 'custom'">{{ $t('pricing.customDays') }}</p>
-            <div v-else>
-              <el-input-number v-model="item.num" :min="0" controls-position="right" :step="30" />
+            <p v-if="item.isCustom">{{ $t('pricing.customDays') }}</p>
+            <div v-else class="number_box">
+              <div class="number_input_box">
+                <span> {{ item.num }}</span>
+                <span>
+                  <el-icon @click="(e) => changeNumberHandler(e, item, true)">
+                    <ArrowUp />
+                  </el-icon>
+                  <el-icon @click="(e) => changeNumberHandler(e, item, false)">
+                    <ArrowDown />
+                  </el-icon>
+                </span>
+              </div>
               <span>{{ $t('pricing.days') }}</span>
             </div>
           </div>
         </div>
         <p class="price_box">
-          <span class="single_price">${{ item.price || '?' }}</span>
+          <span class="single_price">${{ item.isCustom ? '?' : item.price(item) }}</span>
           <span>/{{ $t('pricing.GB') }}</span>
           <span v-if="item.originPrice" class="origin_price">${{ item.originPrice }}</span>
         </p>
-        <el-button type="primary" plain :icon="item.type == 'custom' ? PhoneFilled : ShoppingCart"
+        <el-button type="primary" plain :icon="item.isCustom ? PhoneFilled : ShoppingCart"
           @click="() => submitHandler(item)">
-          {{ item.type == 'custom' ? $t('pricing.contactUs') : $t('pricing.orderNow') }}
+          {{ item.isCustom ? $t('pricing.contactUs') : $t('pricing.orderNow') }}
         </el-button>
         <el-divider />
         <p class="ul_title">{{ $t('pricing.starterIncludes') }}</p>
@@ -51,76 +66,96 @@
 </template>
 
 <script setup lang='ts'>
-import { PhoneFilled, Select, ShoppingCart } from '@element-plus/icons-vue';
+import { ArrowDown, ArrowUp, PhoneFilled, Select, ShoppingCart } from '@element-plus/icons-vue';
+import { groupBy } from 'lodash-es';
 const props = defineProps({
-  personal: {
+  data: {
     type: Array,
     default: () => []
   },
-  enterprise: {
+  starterList: {
     type: Array,
     default: () => []
+  },
+  dynamicType: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emits = defineEmits(['order'])
 
-enum PlanTypeEnums {
-  personal = 'personal',
-  enterprise = 'enterprise',
+const typeGroup = ref<Record<string, any[]>>({})
+const planTypeTabShow = ref(true)
+const planType = ref("")
+const planTypeList = ref<string[]>([])
+
+
+const showList = ref<any[]>([])
+
+const changePlanTypeHandler = (val: any) => {
+  planType.value = val
+  const list = typeGroup.value[val] || []
+  showList.value = list.map((item: any) => {
+    return {
+      planCode: item.planCode,
+      type: item.planType,
+      num: 30,
+      size: item.planFlow + 'GB',
+      priceList: item.price,
+      price: (plan: any) => plan.priceList[`Price_${plan.num}`],
+      originPrice: item.originalPrice,
+      total: (plan: any) => Math.round((plan.price(plan) ?? 0) * plan.num),
+      originTotal: item.originalTotalPrice,
+      extra: item.giftFlow,
+      starters: props.starterList,
+      isCustom: item.isCustom,
+    }
+  })
 }
-const planType = ref(PlanTypeEnums.personal)
 
-const starterList = [
-  'US, BR preferred.',
-  'City-level precision.',
-  'HTTP/HTTPS.',
-  'Unlimited access.',
-  'IP lasts for 90 minutes',
-  '99.9% uptime.',
-  'Invalid IP will not be billed'
-]
-
-const showList = computed(() =>
-  planType.value === PlanTypeEnums.personal ? personalList.value : enterpriseList.value
+watch(
+  () => props.data,
+  (newVal) => {
+    console.log(newVal)
+    typeGroup.value = groupBy(newVal, 'planType')
+    planTypeList.value = Object.keys(typeGroup.value)
+    planType.value = planTypeList.value[0] as string
+    changePlanTypeHandler(planType.value)
+    if (planTypeList.value.length > 1) {
+      planTypeTabShow.value = true
+    } else {
+      planTypeTabShow.value = false
+    }
+  },
+  { immediate: true, deep: true }
 )
 
-const personalList = computed(() => {
-  return props.personal.map((item: any) => {
-    return reactive({
-      planCode: item.planCode,
-      type: item.PlanType,
-      size: item.Flow + 'GB',
-      price: item.UnitPrice,
-      originPrice: item.UnitOriginPrice,
-      total: item.TotalPrice,
-      originTotal: item.TotalOriginPrice,
-      extra: item.GiftFlow,
-      starters: starterList,
-      num: item.DefaultDays
-    })
-  })
-})
-const enterpriseList = computed(() => {
-  return props.enterprise.map((item: any) => {
-    return reactive({
-      planCode: item.planCode,
-      type: item.PlanType,
-      size: item.Flow + 'GB',
-      price: item.UnitPrice,
-      originPrice: item.UnitOriginPrice,
-      total: item.TotalPrice,
-      originTotal: item.TotalOriginPrice,
-      extra: item.GiftFlow,
-      starters: starterList,
-      num: item.DefaultDays
-    })
-  })
-})
+const changeNumberHandler = (e: MouseEvent, plan: any, isAdd: boolean) => {
+  e.stopImmediatePropagation()
+  const priceList = Object.keys(plan.priceList)
+    .map((item: any) => item.replace('Price_', ''))
+    .sort((a: any, b: any) => parseInt(a) - parseInt(b))
+  const index = priceList.findIndex((item: any) => String(item) === String(plan.num))
+  if (isAdd && index !== priceList.length - 1) {
+    plan.num = priceList[index + 1]
+  }
+  if (!isAdd && index !== 0) {
+    plan.num = priceList[index - 1]
+  }
+}
 
+const currentIndex = ref<number | undefined>(undefined)
+const changeCurrentIndexHandler = (index: number) => {
+  currentIndex.value = index
+}
 
 const submitHandler = (data: any) => {
   console.log(data)
+  if (data.isCustom) {
+    // window.open('https://t.me/ProxyRack')
+    return
+  }
   emits('order', {
     planType: data.type,
     planCode: data.planCode,
@@ -136,6 +171,45 @@ const submitHandler = (data: any) => {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .number_box {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    gap: 10px;
+    user-select: none;
+
+    .number_input_box {
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+      border: 1px solid #d7d7d7;
+
+      .el-icon {
+        margin: 0;
+        cursor: pointer;
+        padding: 0 10px;
+
+        &:first-child {
+          border-bottom: 1px solid #d7d7d7;
+        }
+      }
+
+      span {
+        height: 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &:first-child {
+          width: 70px;
+          padding: 0 10px;
+          border-right: 1px solid #d7d7d7;
+        }
+      }
+    }
+  }
 }
 
 .list_group_box {
@@ -146,13 +220,22 @@ const submitHandler = (data: any) => {
   width: 300px;
   height: 788px;
   margin: 20px;
-  padding: 20px;
-  background-color: #E9F4F9;
-  border-radius: 20px;
+  padding: 21px;
+  background-color: #ffffff;
+  border-radius: 5px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  user-select: none;
+  cursor: pointer;
+  border: 1px solid #D7D7D7;
+
+  &:hover {
+    border-color: #316BFF;
+    border-width: 2px;
+    padding: 20px;
+  }
 
   .el-button {
     width: 168px;
@@ -160,7 +243,12 @@ const submitHandler = (data: any) => {
     font-size: 18px;
     padding-top: 14px;
     padding-bottom: 14px;
+    font-family: 'Poppins Medium';
     margin: 0 auto;
+    --el-button-text-color: #316BFF;
+    --el-button-border-color: #316BFF;
+    --el-button-bg-color: #fff;
+    --el-border-radius-base: 8px;
   }
 
   p {
@@ -263,10 +351,24 @@ const submitHandler = (data: any) => {
   }
 
 }
+
+.list_group.active {
+  border-color: #316BFF;
+  border-width: 2px;
+  padding: 20px;
+
+  .el-button {
+    --el-button-text-color: #fff;
+    --el-button-border-color: #316BFF;
+    --el-button-bg-color: #316BFF;
+  }
+}
 </style>
 
 <style lang="scss">
 .dynamic_proxy_type_group {
+  --el-border-radius-base: 8px;
+
   .el-radio-button {
     flex: 1;
   }
@@ -280,6 +382,12 @@ const submitHandler = (data: any) => {
     padding-bottom: 16px;
     border-width: 2px;
     background-color: transparent;
+    border-color: #fff;
+    --el-border: 2px solid #fff;
+
+    &:hover {
+      color: #4D4206;
+    }
   }
 
 }

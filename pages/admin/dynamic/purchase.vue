@@ -3,8 +3,7 @@
     <div class="allow_list_header">
       <h1>{{ $t('dynamic.history.title') }}</h1>
     </div>
-    <DynamicProxyListComp :personal="dynamicPersonalList" :enterprise="dynamicEnterpriseList"
-      @order="createOrderHandler" />
+    <DynamicProxyListComp :data="dynamicProxyList" @order="createOrderHandler" />
     <CreateOrder v-model="createOrderVisible" :data="currentProduct" />
 
   </div>
@@ -19,16 +18,14 @@ onMounted(() => {
 })
 
 const loading = ref(false)
-const dynamicPersonalList = ref([])
+const dynamicProxyList = ref([])
 const dynamicEnterpriseList = ref([])
 const getProductData = () => {
   loading.value = true
   http.get('/v1/website/buy_package')
-    .then((res) => {
+    .then((res: any) => {
       console.log(res)
-      const data = res.data
-      dynamicPersonalList.value = data.DynamicResidentialProxy.PersonalPlans
-      dynamicEnterpriseList.value = data.DynamicResidentialProxy.EnterprisePlans
+      dynamicProxyList.value = res.DynamicResidential
     })
     .catch((err) => {
       console.log(err)

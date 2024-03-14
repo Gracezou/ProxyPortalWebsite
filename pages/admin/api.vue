@@ -4,8 +4,8 @@
       <h1>{{ $t('api.title') }}</h1>
     </div>
 
-    <el-tabs type="border-card" @tab-click="changeTabHandler">
-      <el-tab-pane v-for="tab in tabsList" :key="tab.label" :label="$t(tab.label)">
+    <el-tabs type="border-card" v-model="tabName" @tab-click="changeTabHandler">
+      <el-tab-pane v-for="tab in tabsList" :key="tab.label" :name="tab.label" :label="$t(tab.label)">
         <div class="tab_content">
           <span class="content_label"> {{ $t(tab.valueLabel) }}:</span>
           <span class="content_value"> {{ countValue }} {{ $t(tab.unit) }}</span>
@@ -17,33 +17,34 @@
       <div class="ip_gen_box">
         <client-only>
           <el-form :inline="true" size="large" :model="form" label-position="top">
-            <el-form-item label="选择数量">
+            <el-form-item :label="$t('api.chooseNumber')">
               <el-input-number v-model="form.num" :max="numberMax" :controls="false" clearable />
             </el-form-item>
-            <el-form-item label="选择国家/地区">
+            <el-form-item :label="$t('api.chooseRegion')">
               <el-select v-model="form.regions" clearable>
                 <el-option v-for="region in regionsList" :key="region.value" :label="region.label"
                   :value="region.value" />
               </el-select>
             </el-form-item>
-            <el-form-item label="代理协议">
+            <el-form-item :label="$t('api.protocol')">
               <el-select v-model="form.protocol" clearable>
                 <el-option label="HTTP/HTTPS" value="HTTP/HTTPS" />
               </el-select>
             </el-form-item>
-            <el-form-item label="数据格式">
+            <el-form-item :label="$t('api.dataFormat')">
               <el-select v-model="form.dataType" clearable>
                 <el-option label="TXT" value="txt" />
                 <el-option label="JSON" value="json" />
               </el-select>
             </el-form-item>
-            <el-form-item label="分隔符">
+            <el-form-item :label="$t('api.delimiter')">
               <el-select v-model="form.delimiter" clearable>
                 <el-option v-for="item in delimiterOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
             <div class="gen_button_box">
-              <el-button type="primary" size="large" class="green_style" @click="generateUrlHandler">生成链接</el-button>
+              <el-button type="primary" size="large" class="green_style" @click="generateUrlHandler">{{
+    $t('api.generateLink') }}</el-button>
             </div>
           </el-form>
         </client-only>
@@ -52,12 +53,14 @@
       <div class="code_content">
         <div class="code_title">
           <div class="code_title_tips">
-            <div class="white">测试命令</div>
-            <div class="red">*所有类型IP仅支持在境外网络环境下使用</div>
+            <div class="white">{{ $t('api.testCommand') }}</div>
+            <div class="red">{{ $t('api.testTips') }}</div>
           </div>
           <div class="button_box">
-            <el-button type="primary" size="large" class="green_style" @click="copyUrlHandler">复制链接</el-button>
-            <el-button type="primary" size="large" class="red_style" @click="openUrlHandler">打开链接</el-button>
+            <el-button type="primary" size="large" class="green_style" @click="copyUrlHandler">{{ $t('api.copyLink')
+              }}</el-button>
+            <el-button type="primary" size="large" class="red_style" @click="openUrlHandler">{{ $t('api.openLink')
+              }}</el-button>
           </div>
         </div>
         <div class="code_box">
@@ -65,15 +68,15 @@
         </div>
       </div>
       <div class="interface_note">
-        <h2>接口参数注释</h2>
-        <h4>使用方法：</h4>
+        <h2>{{ $t('api.interfaceComments') }}</h2>
+        <h4>{{ $t('api.useMethod') }}：</h4>
         <el-table :data="paramsInterfaceData">
-          <el-table-column prop="name" label="名称" :align="'center'" />
-          <el-table-column prop="type" label="类型" :align="'center'" />
-          <el-table-column prop="require" label="必选" :align="'center'" />
-          <el-table-column prop="desc" label="说明" :align="'center'" />
+          <el-table-column prop="name" :label="$t('api.name')" :align="'center'" />
+          <el-table-column prop="type" :label="$t('api.type')" :align="'center'" />
+          <el-table-column prop="require" :label="$t('api.required')" :align="'center'" />
+          <el-table-column prop="desc" :label="$t('api.description')" :align="'center'" />
         </el-table>
-        <h4>结果返回示例：</h4>
+        <h4>{{ $t('api.resultExample') }}：</h4>
         <pre class="hljs language-json">
                   <span class="hljs-punctuation">{</span>
                     <span class="hljs-attr">"code"</span><span class="hljs-punctuation">:</span><span class="hljs-number">0</span><span class="hljs-punctuation">,</span>
@@ -85,11 +88,11 @@
                               <span class="hljs-punctuation">]</span>
                   <span class="hljs-punctuation">}</span>
       </pre>
-        <h4>结果注释：</h4>
+        <h4>{{ $t('api.resultComment') }}：</h4>
         <el-table :data="resultInterfaceData">
-          <el-table-column prop="name" label="名称" :align="'center'" />
-          <el-table-column prop="type" label="类型" :align="'center'" />
-          <el-table-column prop="desc" label="说明" :align="'center'" />
+          <el-table-column prop="name" :label="$t('api.name')" :align="'center'" />
+          <el-table-column prop="type" :label="$t('api.type')" :align="'center'" />
+          <el-table-column prop="desc" :label="$t('api.description')" :align="'center'" />
         </el-table>
       </div>
     </div>
@@ -113,6 +116,7 @@ const numberMax = ref(1000)
 const countValue = ref(0)
 const regionsList = ref<{ label: string, value: string }[]>([])
 const loading = ref(false)
+const tabName = ref('')
 const changeTabHandler = (tab: any) => {
   const currentTab = tabsList.value[tab.index]
   resetData()
@@ -120,19 +124,25 @@ const changeTabHandler = (tab: any) => {
 }
 const route = useRoute()
 onMounted(() => {
-
   console.log(route.query)
   switch (route.query.type) {
     case 'RotatingDatacenter':
+    case 'rotatingDataCenterProxy':
+      tabName.value = 'api.rotatingDataCenterProxy'
       rotatingDataCenterHandler()
       break
     case 'StaticResidential':
+    case 'staticResidentialProxy':
+      tabName.value = 'api.staticResidentialProxy'
       staticResidentialHandler()
       break
     case 'StaticDatacenter':
+    case 'staticDataCenterProxy':
+      tabName.value = 'api.staticDataCenterProxy'
       staticDataCenterHandler()
       break
     default:
+      tabName.value = 'api.dynamicProxy'
       dynamicResidentialHandler()
   }
 })
@@ -252,21 +262,20 @@ const openUrlHandler = () => {
 
 // form 数据结构类型
 const paramsInterfaceData = ref([
-  { name: 'num', type: 'int', require: '是', desc: '提取ip数量' },
-  { name: 'regions', type: 'string', require: '是', desc: '国家/地区' },
-  { name: 'protocol', type: 'string', require: '是', desc: '协议（http:HTTP/HTTPS socks5:SOCKS5）' },
-  { name: 'dataType', type: 'string', require: '是', desc: '数据格式：txt json' },
-  { name: 'delimiter', type: 'string', require: '是', desc: '分隔符(1:\r\n 2:/br 3:\r 4:\n 5:\t )' },
-  { name: 'username', type: 'string', require: '是', desc: '用户名' },
+  { name: 'num', type: 'int', require: 'api.yes', desc: 'api.ipCount' },
+  { name: 'regions', type: 'string', require: 'api.yes', desc: 'api.region' },
+  { name: 'protocol', type: 'string', require: 'api.yes', desc: 'api.paramProtocal' },
+  { name: 'dataType', type: 'string', require: 'api.yes', desc: 'api.dataType' },
+  { name: 'delimiter', type: 'string', require: 'api.yes', desc: 'api.delimiterType' },
+  { name: 'username', type: 'string', require: 'api.yes', desc: 'api.username' },
 ])
 
 const resultInterfaceData = ref([
-  { name: 'IP', type: 'int', desc: 'ip地址' },
-  { name: 'PORT', type: 'int', desc: '端口号' },
+  { name: 'IP', type: 'int', desc: 'api.ipAddress' },
+  { name: 'PORT', type: 'int', desc: 'api.port' },
 ])
 
-const option = ref({
-})
+const option = ref({})
 </script>
 
 <style scoped lang="scss">

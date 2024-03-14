@@ -3,39 +3,27 @@
 
     <el-menu default-active="2" router>
       <el-menu-item index="/admin/overview">
-        <el-icon>
-          <Monitor />
-        </el-icon>
+        <el-image src="/icon/nav/Overview.svg" />
         <span>{{ $t('menu.overview') }}</span>
       </el-menu-item>
       <el-divider />
       <el-menu-item-group :title="$t('menu.proxy')">
       </el-menu-item-group>
       <el-menu-item index="/admin/api">
-        <el-icon>
-          <Link />
-        </el-icon>
+        <el-image src="/icon/nav/api.svg" />
         <span>{{ $t('menu.apiMenu') }}</span>
       </el-menu-item>
-
       <el-menu-item index="/admin/user">
-        <el-icon>
-          <Link />
-        </el-icon>
+        <el-image src="/icon/nav/userAuth.svg" />
         <span>{{ $t('menu.userAuth') }}</span>
       </el-menu-item>
-
       <el-menu-item index="/admin/account">
-        <el-icon>
-          <Link />
-        </el-icon>
+        <el-image src="/icon/nav/subAccount.svg" />
         <span>{{ $t('menu.subAccount') }}</span>
       </el-menu-item>
 
       <el-menu-item index="/admin/allow">
-        <el-icon>
-          <Link />
-        </el-icon>
+        <el-image src="/icon/nav/IPAllowlist.svg" />
         <span>{{ $t('menu.ipAllowList') }}</span>
       </el-menu-item>
       <el-divider />
@@ -43,9 +31,7 @@
 
       <el-sub-menu index="/admin/dynamic">
         <template #title>
-          <el-icon>
-            <Link />
-          </el-icon>
+          <el-image src="/icon/nav/Residential.svg" />
           <span>{{ $t('menu.dynamicProxy') }}</span>
         </template>
         <el-menu-item index="/admin/dynamic/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
@@ -53,9 +39,7 @@
       </el-sub-menu>
       <el-sub-menu index="/admin/rotating">
         <template #title>
-          <el-icon>
-            <Link />
-          </el-icon>
+          <el-image src="/icon/nav/rotatingDatacenter.svg" />
           <span>{{ $t('menu.rotatingDataCenterProxy') }}</span>
         </template>
         <el-menu-item index="/admin/rotating/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
@@ -73,9 +57,7 @@
       </el-sub-menu> -->
       <el-sub-menu index="/admin/residential">
         <template #title>
-          <el-icon>
-            <Link />
-          </el-icon>
+          <el-image src="/icon/nav/staticResidential.svg" />
           <span>{{ $t('menu.staticResidentialProxy') }}</span>
         </template>
         <el-menu-item index="/admin/residential/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
@@ -85,9 +67,7 @@
 
       <el-sub-menu index="/admin/datacenter">
         <template #title>
-          <el-icon>
-            <Link />
-          </el-icon>
+          <el-image src="/icon/nav/staticdatacenter.svg" />
           <span>{{ $t('menu.staticDataCenterProxy') }}</span>
         </template>
         <el-menu-item index="/admin/datacenter/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
@@ -101,7 +81,6 @@
 </template>
 
 <script setup lang='ts'>
-import { Link, Monitor } from '@element-plus/icons-vue';
 
 </script>
 
@@ -111,6 +90,12 @@ import { Link, Monitor } from '@element-plus/icons-vue';
   background-color: #fff;
   padding: 15px 14px;
   border-right: #D7D7D7 1px solid;
+
+  .el-image {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
 
   .el-divider {
     margin: 15px 0;

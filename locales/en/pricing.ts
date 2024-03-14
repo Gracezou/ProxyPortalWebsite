@@ -19,7 +19,8 @@ export default {
   validityPeriod: 'Validity Period',
   starterIncludes: 'Starter includes',
   customDays: 'Custom Days',
-  subAccount: 'Sub Account',
+  subAccount: 'Sub-account',
+  unlimitedIpAmount: 'Unlimited IP Amount',
   unlimited: 'Unlimited',
   contactUs: 'Contact Us',
 

@@ -22,10 +22,9 @@ const rotatingDataCenter = ref({})
 const getProductData = () => {
   loading.value = true
   http.get('/v1/website/buy_package')
-    .then((res) => {
+    .then((res: any) => {
       console.log(res)
-      const data = res.data
-      rotatingDataCenter.value = data.StaticDatacenterProxy
+      rotatingDataCenter.value = res.StaticDatacenter
     })
     .catch((err) => {
       console.log(err)
