@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <img src="~/assets/image/dynamic.gif" alt="">
+    <img src="~/assets/image/lottie_1.gif" alt="">
   </div>
 </template>
 <script setup lang='ts'>

@@ -5,17 +5,15 @@ import { fileURLToPath } from 'url'
 // config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  ssr: true,
   app: {
     // head
     head: {
       title: 'Ruby Proxy',
       meta: [
+        { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        {
-          hid: 'description',
-          name: 'description',
-          content: 'Ruby Proxy',
-        },
+        { hid: 'description', name: 'description', content: 'Ruby Proxy', },
       ],
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
     },
@@ -35,7 +33,7 @@ export default defineNuxtConfig({
     shim: false,
   },
   build: {
-    transpile: ['vue-i18n', /echarts/],
+    transpile: ['vue-i18n', /echarts/, 'lodash-es'],
   },
   vite: {
     css: {

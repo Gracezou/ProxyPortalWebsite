@@ -1,5 +1,5 @@
 export default {
-  title: 'Static Residential Proxy',
+  title: 'Dynamic Residential Proxy',
   startTime: 'Start Time',
   endTime: 'End Time',
   orderIdPlaceholder: 'Please enter order ID',

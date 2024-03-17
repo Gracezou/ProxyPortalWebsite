@@ -8,19 +8,21 @@ const isLogin = computed(() => {
   return getToken() && getUserInfo();
 });
 
-const username = computed(() => {
+const username = ref('');
+onMounted(() => {
   const userStr = getUserInfo();
   if (userStr) {
     const user = JSON.parse(userStr)
-    return user.username || user.user_email
+    username.value = user.username || user.user_email
   }
-  return '';
-});
+})
+
 const router = useRouter()
 const goOverviewHandler = () => router.push('/admin/overview');
 const logoutHandler = () => {
   removeToken()
   removeUserInfo()
+  username.value = ''
   router.replace('/login')
 }
 
@@ -37,7 +39,47 @@ const goLoginHandler = () => router.push('/login')
 // to register page
 const goRegisterHandler = () => router.push('/register')
 // to pricing page
-const gotoPricingHandler = () => router.push('/pricing')
+const gotoPricingHandler = (name: string) => {
+  if (isLogin.value) {
+    switch (name) {
+      case 'menu.resiDential':
+        router.push('/admin/dynamic/purchase')
+        break
+      case 'menu.staticResidential':
+        router.push('/admin/residential/purchase')
+        break
+      case 'menu.dedicatedDatacenter':
+        router.push('/admin/rotating/purchase')
+        break
+      case 'menu.rotatingDatacenter':
+        router.push('/admin/datacenter/purchase')
+        break
+    }
+  } else {
+    router.push('/pricing')
+  }
+}
+const gotoProxyHandler = (name: string) => {
+  console.log(name)
+  if (isLogin.value) {
+    switch (name) {
+      case 'menu.api':
+        router.push('/admin/api')
+        break
+      case 'menu.user':
+        router.push('/admin/user')
+        break
+      case 'menu.global':
+        // router.push('/admin/account')
+        break
+      case 'menu.rubyProxy':
+        // router.push('/admin/allow')
+        break
+    }
+  } else {
+    router.push('/login')
+  }
+}
 const proxiesDropdownVisible = ref(false)
 const proxiesItemList = [
   {
@@ -163,7 +205,7 @@ const getProxiesLastItem = {
                   <p>{{ $t('menu.proxiesTitle') }}</p>
                   <el-divider />
                   <div class="content">
-                    <div class="dropdown_item hover" v-for="p in proxiesItemList" :key="p.title">
+                    <div class="dropdown_item hover" v-for="p in proxiesItemList" :key="p.title" @click="goHomeHandler">
                       <div class="icon_image">
                         <el-image :src="p.icon" />
                       </div>
@@ -198,7 +240,7 @@ const getProxiesLastItem = {
                   </div>
                   <div class="content">
                     <div class="dropdown_item hover" v-for="pricing in pricingItemList" :key="pricing.title"
-                      @click="gotoPricingHandler">
+                      @click="gotoPricingHandler(pricing.title)">
                       <div class="icon_image">
                         <el-image :src="pricing.icon" />
                       </div>
@@ -237,7 +279,8 @@ const getProxiesLastItem = {
                   </div>
                   <div class="content">
                     <div>
-                      <div class="dropdown_item hover" v-for="getProxy in getProxiesItemList" :key="getProxy.title">
+                      <div class="dropdown_item hover" v-for="getProxy in getProxiesItemList" :key="getProxy.title"
+                        @click="gotoProxyHandler(getProxy.title)">
                         <div class="icon_image">
                           <el-image :src="getProxy.icon" />
                         </div>
@@ -248,7 +291,7 @@ const getProxiesLastItem = {
                       </div>
                     </div>
                     <div>
-                      <div class="dropdown_item hover">
+                      <div class="dropdown_item hover" @click="gotoProxyHandler(getProxiesLastItem.title)">
                         <div class="icon_image">
                           <el-image :src="getProxiesLastItem.icon" />
                         </div>
@@ -281,7 +324,7 @@ const getProxiesLastItem = {
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="zh">中文</el-dropdown-item>
+              <el-dropdown-item command="zh">繁體中文</el-dropdown-item>
               <el-dropdown-item command="en">English</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -312,6 +355,7 @@ const getProxiesLastItem = {
   padding: 0 70px;
   height: 84px;
   background-color: transparent;
+  user-select: none;
 
   .el-dropdown {
     height: 40px;

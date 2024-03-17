@@ -1,7 +1,7 @@
 <template>
   <div class="allow_list_wrapper">
     <div class="allow_list_header">
-      <h1>{{ $t('datacenter.proxy.title') }}</h1>
+      <h1>{{ $t('datacenter.history.title') }}</h1>
     </div>
     <div class="allow_list_body">
       <div class="table_wrapper">
@@ -18,12 +18,12 @@
             </template>
           </el-input>
           <client-only>
-            <el-select v-model="proxyStatus" size="large" clearable>
+            <el-select v-model="proxyStatus" size="large" clearable placeholder="Proxy Status">
               <el-option v-for="item in proxyStatusOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </client-only>
           <client-only>
-            <el-select v-model="autoRenewStatus" size="large" clearable>
+            <el-select v-model="autoRenewStatus" size="large" clearable placeholder="Auto Renew Status">
               <el-option v-for="item in autoRenewStatusOptions" :key="item.value" :label="item.label"
                 :value="item.value" />
             </el-select>
@@ -42,22 +42,25 @@
             :formatter="parseTime" />
           <el-table-column prop="Status" :label="$t('datacenter.proxy.status')" :align="'center'"
             :formatter="parseStatus" />
-          <el-table-column prop="AutoRenew" :label="$t('datacenter.proxy.autoRenew')" :align="'center'"
-            :formatter="parseAuto" />
-          <el-table-column prop="Remarks" :label="$t('datacenter.proxy.remark')" :align="'center'"
-            show-overflow-tooltip />
-          <el-table-column :label="$t('datacenter.proxy.operate')" :align="'center'">
-
+          <el-table-column prop="AutoRenew" :label="$t('residential.proxy.autoRenew')" :align="'center'">
             <template #default="scope">
-              <div class="operation_box">
-                <el-switch v-model="scope.row.renew" :loading="loading"
-                  style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+              <div class="auto_renew_switch">
+                <el-switch v-model="scope.row.renew" :loading="loading" active-text="On" inactive-text="Off"
                   :before-change="() => changeAutoRenew(scope.row)" />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="Remarks" :label="$t('residential.proxy.remark')" :align="'center'"
+            show-overflow-tooltip>
+            <template #default="scope">
+              <div class="remark_box">
+                <el-tooltip effect="dark" :content="scope.row.Remarks" placement="top">
+                  <div class="cell">{{ scope.row.Remarks }}</div>
+                </el-tooltip>
                 <el-icon size="20" class="option_btn" @click="() => editHandler(scope.row)">
                   <Edit />
                 </el-icon>
               </div>
-
             </template>
           </el-table-column>
         </el-table>
@@ -309,6 +312,19 @@ const submitHandler = () => {
   .option_btn {
     cursor: pointer;
     margin: 8px;
+  }
+
+  .remark_box {
+    display: flex;
+    align-items: center;
+
+    .cell {
+      flex: 1;
+      // 隐藏超出部分
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
 }

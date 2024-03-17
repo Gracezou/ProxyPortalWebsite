@@ -5,7 +5,7 @@ import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 const http = axios.create()
 // 基础路径
-export const BASE_URL = 'http://api.mcdlmail.com'
+export const BASE_URL = 'https://api.rubyproxy.com'
 
 http.interceptors.request.use(
   async (config) => {

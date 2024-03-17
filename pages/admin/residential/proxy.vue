@@ -1,7 +1,7 @@
 <template>
   <div class="allow_list_wrapper">
     <div class="allow_list_header">
-      <h1>{{ $t('residential.proxy.title') }}</h1>
+      <h1>{{ $t('residential.history.title') }}</h1>
     </div>
     <div class="allow_list_body">
       <div class="table_wrapper">
@@ -12,19 +12,19 @@
                 :value="item.value" />
             </el-select>
           </client-only>
-
           <el-input v-model="keywords" size="large" @keydown.enter="init">
             <template #append>
               <el-button @click="init"> {{ $t('residential.proxy.search') }} </el-button>
             </template>
           </el-input>
           <client-only>
-            <el-select v-model="proxyStatus" size="large" clearable>
+            <el-select v-model="proxyStatus" size="large" clearable :placeholder="$t('residential.proxy.proxyStatus')">
               <el-option v-for="item in proxyStatusOptions" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </client-only>
           <client-only>
-            <el-select v-model="autoRenewStatus" size="large" clearable>
+            <el-select v-model="autoRenewStatus" size="large" clearable
+              :placeholder="$t('residential.proxy.autoRenewStatus')">
               <el-option v-for="item in autoRenewStatusOptions" :key="item.value" :label="item.label"
                 :value="item.value" />
             </el-select>
@@ -43,22 +43,25 @@
             :formatter="parseTime" />
           <el-table-column prop="Status" :label="$t('residential.proxy.status')" :align="'center'"
             :formatter="parseStatus" />
-          <el-table-column prop="AutoRenew" :label="$t('residential.proxy.autoRenew')" :align="'center'"
-            :formatter="parseAuto" />
-          <el-table-column prop="Remarks" :label="$t('residential.proxy.remark')" :align="'center'"
-            show-overflow-tooltip />
-          <el-table-column :label="$t('residential.proxy.operate')" :align="'center'">
-
+          <el-table-column prop="AutoRenew" :label="$t('residential.proxy.autoRenew')" :align="'center'">
             <template #default="scope">
-              <div class="operation_box">
-                <el-switch v-model="scope.row.renew" :loading="loading"
-                  style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+              <div class="auto_renew_switch">
+                <el-switch v-model="scope.row.renew" :loading="loading" active-text="On" inactive-text="Off"
                   :before-change="() => changeAutoRenew(scope.row)" />
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="Remarks" :label="$t('residential.proxy.remark')" :align="'center'"
+            show-overflow-tooltip>
+            <template #default="scope">
+              <div class="remark_box">
+                <el-tooltip effect="dark" :content="scope.row.Remarks" placement="top">
+                  <div class="cell">{{ scope.row.Remarks }}</div>
+                </el-tooltip>
                 <el-icon size="20" class="option_btn" @click="() => editHandler(scope.row)">
                   <Edit />
                 </el-icon>
               </div>
-
             </template>
           </el-table-column>
         </el-table>
@@ -191,6 +194,7 @@ const editHandler = (row: any) => {
 }
 
 const changeAutoRenew = (row: any) => {
+  console.log(row)
   form.ip = row.IP
   form.autoRenew = !row.AutoRenew
   form.remarks = row.Remarks
@@ -312,6 +316,19 @@ const submitHandler = () => {
     margin: 8px;
   }
 
+  .remark_box {
+    display: flex;
+    align-items: center;
+
+    .cell {
+      flex: 1;
+      // 隐藏超出部分
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
 }
 </style>
 
@@ -346,6 +363,18 @@ const submitHandler = () => {
       background-color: #F2F2F2;
     }
 
+  }
+
+  .auto_renew_switch {
+    --el-text-color-primary: #d7d7d7;
+
+    .el-switch__label.is-active.el-switch__label--right {
+      color: #13ce66;
+    }
+
+    .el-switch__label.is-active.el-switch__label--left {
+      color: #ff4949;
+    }
   }
 }
 </style>

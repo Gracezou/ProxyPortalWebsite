@@ -1,5 +1,7 @@
 export default {
   title: 'Manage Proxy',
+  autoRenewStatus: 'Auto Renew Status',
+  proxyStatus: 'Proxy Status',
   search: 'Search',
   reset: 'Reset',
   ip: 'IP',

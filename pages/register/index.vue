@@ -5,11 +5,12 @@
       <div class="register_sub_title">{{ $t('register.registerSubTitle') }}</div>
       <el-form ref="ruleFormRef" :model="form" :rules="rules" status-icon>
         <el-form-item prop="email">
-          <el-input class="login_input" v-model="form.email" :placeholder="$t('register.registerEmailPlaceholder')" />
+          <el-input class="login_input" v-model="form.email" :placeholder="$t('register.registerEmailPlaceholder')"
+            auto-complete="new-password" />
         </el-form-item>
         <el-form-item prop="password">
           <el-input class="login_input" v-model="form.password"
-            :placeholder="$t('register.registerPasswordPlaceholder')" show-password />
+            :placeholder="$t('register.registerPasswordPlaceholder')" show-password auto-complete="new-password" />
         </el-form-item>
       </el-form>
       <div class="police_box">
@@ -21,7 +22,8 @@
           <span @click="gotoRefundPolicy"> {{ $t('register.refundPolicy') }}</span>
         </p>
       </div>
-      <el-button v-loading="loading" class="register_btn" type="primary" :disabled="!checked" @click="registerHandler">
+      <el-button v-loading="loading" class="register_btn" type="primary" :disabled="registerable"
+        @click="registerHandler">
         {{ $t('register.createAccount') }}
       </el-button>
       <div class="tips_group">
@@ -54,6 +56,21 @@ const rules = reactive<FormRules>({
 })
 const loading = ref(false)
 const checked = ref(false)
+const registerable = ref(true)
+watchEffect(() => {
+  console.log(checked.value, 'checked')
+  console.log(form, 'form')
+  if (ruleFormRef.value) {
+    ruleFormRef.value.clearValidate()
+    ruleFormRef.value.validate().then((valid) => {
+      console.log(valid, 'valid')
+      registerable.value = !valid && checked.value
+    })
+  }
+})
+onMounted(() => {
+  ruleFormRef.value && ruleFormRef.value.clearValidate()
+})
 const registerHandler = () => {
   console.log(form)
   if (!ruleFormRef.value) return

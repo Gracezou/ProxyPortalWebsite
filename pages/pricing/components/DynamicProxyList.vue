@@ -8,7 +8,7 @@
     <div class="list_group_box">
       <div v-for="(item, index) in showList" :key="item.planCode" class="list_group"
         :class="currentIndex === index ? 'active' : ''" @click="() => changeCurrentIndexHandler(index)">
-        <p class="group_title">{{ item.isCustom ? 'Custom +' : item.size }}</p>
+        <p class="group_title">{{ item.isCustom ? 'Custom +' : `${item.size}GB` }}</p>
         <p class="total_box">
           <span>{{ $t('pricing.total') }}:</span>
           <span class="total_price">${{ item.isCustom ? '?' : item.total(item) }}</span>
@@ -101,11 +101,11 @@ const changePlanTypeHandler = (val: any) => {
       planCode: item.planCode,
       type: item.planType,
       num: 30,
-      size: item.planFlow + 'GB',
+      size: item.planFlow,
       priceList: item.price,
       price: (plan: any) => plan.priceList[`Price_${plan.num}`],
       originPrice: item.originalPrice,
-      total: (plan: any) => Math.round((plan.price(plan) ?? 0) * plan.num),
+      total: (plan: any) => Math.round((plan.price(plan) ?? 0) * plan.size),
       originTotal: item.originalTotalPrice,
       extra: item.giftFlow,
       starters: props.starterList,
@@ -222,7 +222,7 @@ const submitHandler = (data: any) => {
   margin: 20px;
   padding: 21px;
   background-color: #ffffff;
-  border-radius: 5px;
+  border-radius: 8px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

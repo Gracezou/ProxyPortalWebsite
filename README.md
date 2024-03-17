@@ -105,3 +105,27 @@ sub account：
 price 调整
 注册页面调整
 logout修复
+
+
+3.15
+通用：刷新500问题
+官网：
+语言切换繁体中文
+下拉菜单跳转
+
+overview：
+菜单栏icon样式调整
+
+sub account： -clear
+Traffic Limit的小数位数精确到两位 (/M)
+时间格式处理秒
+
+price -clear
+dynamic proxy: 标题调整
+菜单栏 二级字体调整
+manage proxy
+select placeholder
+time format
+static residential purchase
+search input width suitable
+ manage proxy delete option

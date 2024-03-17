@@ -23,14 +23,13 @@
               <el-text v-else type="info">Unknown</el-text>
             </template>
           </el-table-column>
-          <el-table-column prop="limit_flow" :label="$t('subAccount.trafficLimit')" :align="'center'"
+          <el-table-column prop="limit_flow" :label="`${$t('subAccount.trafficLimit')}  (M)`" :align="'center'"
             :formatter="(__, _, value) => parseInt(value).toFixed(2)" />
-          <el-table-column prop="consumed_flow" :label="$t('subAccount.trafficUsed')" :align="'center'" />
+          <el-table-column prop="consumed_flow" :label="`${$t('subAccount.trafficUsed')}  (M)`" :align="'center'" />
           <el-table-column prop="remark" :label="$t('subAccount.remark')" :align="'center'" />
           <el-table-column prop="create_time" :label="$t('subAccount.addTime')" :align="'center'"
             :formatter="(__, _, value) => formatShowTime(value)" />
           <el-table-column :label="$t('subAccount.operate')" :align="'center'">
-
             <template #default="scope">
               <el-icon class="option_btn" @click="() => changeStateHandler(scope.row)">
                 <Lock />
@@ -57,8 +56,8 @@
           <el-form-item :label="$t('subAccount.password')">
             <el-input v-model="form.sub_password" :placeholder="$t('subAccount.passwordPlaceholder')" />
           </el-form-item>
-          <el-form-item :label="$t('subAccount.trafficLimit')">
-            <el-input-number v-model="form.limit" :controls="false" />
+          <el-form-item :label="`${$t('subAccount.trafficLimit')}(M)`">
+            <el-input-number v-model="form.limit" :controls="false" :precision="2" />
           </el-form-item>
           <el-form-item :label="$t('subAccount.remark')">
             <el-input :rows="3" type="textarea" v-model="form.remark" />
@@ -129,7 +128,7 @@ const addHandler = () => {
   dialogVisible.value = true
 }
 const editHandler = (row: any) => {
-  form.limit = row.limit_flow
+  form.limit = parseFloat(row.limit_flow)
   form.sub_username = row.account
   form.sub_password = row.password
   form.state = row.state

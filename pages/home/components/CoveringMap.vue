@@ -4,28 +4,26 @@
         <p>{{ $t('home.coveringDesc') }}</p>
         <div class="covering_map">
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === 'north'" src="images/map/map-north-america.png" fit="fill" />
-                <!-- <el-image :src="mapUrl" fit="fill" /> -->
+                <el-image v-if="mapLocation === 'north'" :src="map_north_america" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === 'south'" src="images/map/map-south-america.png" fit="fill" />
+                <el-image v-if="mapLocation === 'south'" :src="map_south_america" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === 'asia'" src="images/map/map-asia.png" fit="fill" />
+                <el-image v-if="mapLocation === 'asia'" :src="map_asia" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === 'australia'" src="images/map/map-australia.png" fit="fill" />
+                <el-image v-if="mapLocation === 'australia'" :src="map_australia" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === 'europe'" src="images/map/map-europe.png" fit="fill" />
+                <el-image v-if="mapLocation === 'europe'" :src="map_europe" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === 'africa'" src="images/map/map-africa.png" fit="fill" />
+                <el-image v-if="mapLocation === 'africa'" :src="map_africa" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === ''" src="images/map/map-normal.png" fit="fill" />
+                <el-image v-if="mapLocation === ''" :src="map" fit="fill" />
             </transition>
-
 
             <el-icon class="north" @mouseenter="handleMouseEnter('north')" @mouseleave="handleMouseLeave">
                 <Location />
@@ -51,25 +49,8 @@
 
 <script setup lang='ts'>
 import { Location } from '@element-plus/icons-vue';
+import { map, map_africa, map_asia, map_australia, map_europe, map_north_america, map_south_america } from '~/assets/image/map/map';
 const mapLocation = ref('');
-const mapUrl = computed(() => {
-    switch (mapLocation.value) {
-        case 'north':
-            return 'images/map/map-north-america.png';
-        case 'south':
-            return 'images/map/map-south-america.png';
-        case 'asia':
-            return 'images/map/map-asia.png';
-        case 'australia':
-            return 'images/map/map-australia.png';
-        case 'europe':
-            return 'images/map/map-europe.png';
-        case 'africa':
-            return 'images/map/map-africa.png';
-        default:
-            return 'images/map/map-normal.png';
-    }
-});
 const handleMouseEnter = (location: string) => {
     mapLocation.value = location;
 };

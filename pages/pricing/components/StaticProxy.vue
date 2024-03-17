@@ -15,7 +15,8 @@
                 <template v-if="region.value.length > 0">
 
                   <h5 class="region_title">{{ region.name }}</h5>
-                  <div class="product_info" v-for="product in region.value" @click="addCartHandler(product)">
+                  <div class="product_info" v-for="product in region.value"
+                    :class="isExitCartList(product) ? 'active' : ''" @click="addCartHandler(product)">
 
                     <p class="product_name">{{ product.region }}</p>
                     <div class="product_price_box">
@@ -111,6 +112,10 @@ onMounted(() => {
   period.value = 'weekly'
 })
 
+const isExitCartList = (product: any) => {
+  return cartList.value.find((item) => item.regionCode === product.regionCode)
+}
+
 const addCartHandler = (product: any) => {
   const index = cartList.value.findIndex((item) => item.regionCode === product.regionCode)
   if (index === -1) {
@@ -119,6 +124,8 @@ const addCartHandler = (product: any) => {
     cartList.value[index].num++
   }
 }
+
+
 
 const clearAllHandler = () => {
   cartList.value = []
@@ -157,6 +164,7 @@ const submitHandler = () => {
 
   .period_button_group {
     --el-font-size-base: 20px;
+    --el-border-radius-base: 8px;
     width: 100%;
     display: flex;
   }
@@ -172,10 +180,10 @@ const submitHandler = () => {
   .goods_box {
     width: 100%;
     background-color: #FFFFFF;
-    border-radius: 20px;
+    border-radius: 8px;
     box-sizing: border-box;
     margin-top: 25px;
-    height: 650px;
+    height: 664px;
     box-sizing: border-box;
   }
 
@@ -227,6 +235,10 @@ const submitHandler = () => {
     &:hover {
       border-color: #316BFF;
     }
+  }
+
+  .product_info.active {
+    border-color: #316BFF;
   }
 
   .product_name {

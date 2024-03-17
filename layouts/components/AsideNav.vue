@@ -1,7 +1,7 @@
 <template>
   <el-aside width="340px" class="aside_wrapper">
 
-    <el-menu default-active="2" router>
+    <el-menu :default-active="defaultRoute" router>
       <el-menu-item index="/admin/overview">
         <el-image src="/icon/nav/Overview.svg" />
         <span>{{ $t('menu.overview') }}</span>
@@ -45,16 +45,6 @@
         <el-menu-item index="/admin/rotating/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
         <el-menu-item index="/admin/rotating/history">{{ $t('menu.paymentHistory') }}</el-menu-item>
       </el-sub-menu>
-      <!-- <el-sub-menu index="/admin/isp">
-        <template #title>
-          <el-icon>
-            <Link />
-          </el-icon>
-          <span>{{ $t('menu.rotatingIspProxy') }}</span>
-        </template>
-        <el-menu-item index="/admin/isp/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
-        <el-menu-item index="/admin/isp/history">{{ $t('menu.paymentHistory') }}</el-menu-item>
-      </el-sub-menu> -->
       <el-sub-menu index="/admin/residential">
         <template #title>
           <el-image src="/icon/nav/staticResidential.svg" />
@@ -81,7 +71,11 @@
 </template>
 
 <script setup lang='ts'>
-
+// 获取默认路由
+const route = useRoute()
+const defaultRoute = computed(() =>
+  route.path
+)
 </script>
 
 <style lang="scss" scoped>
@@ -95,6 +89,8 @@
     width: 24px;
     height: 24px;
     margin-right: 10px;
+    display: flex;
+    align-items: center;
   }
 
   .el-divider {
@@ -104,12 +100,21 @@
   .el-menu {
     border-right: none;
     --el-menu-item-font-size: 16px;
+    --el-menu-level-padding: 35px;
   }
 
   .el-menu-item,
   .el-sub-menu {
-    font-weight: 600;
     color: #555555;
   }
+
+  .el-sub-menu {
+    font-weight: 600;
+  }
+
+  .el-menu-item {
+    font-weight: 400;
+  }
+
 }
 </style>
