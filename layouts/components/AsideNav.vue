@@ -71,11 +71,17 @@
 </template>
 
 <script setup lang='ts'>
+import { getToken, getUserInfo } from '@/utils/storage';
 // 获取默认路由
 const route = useRoute()
 const defaultRoute = computed(() =>
   route.path
 )
+onMounted(() => {
+  if (!getToken() || !getUserInfo()) {
+    return navigateTo('/login')
+  }
+})
 </script>
 
 <style lang="scss" scoped>

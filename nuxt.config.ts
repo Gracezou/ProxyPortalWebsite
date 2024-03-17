@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 // config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  ssr: true,
+  ssr: false,
   app: {
     // head
     head: {

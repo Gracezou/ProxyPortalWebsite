@@ -5,7 +5,12 @@
     </div>
     <div class="allow_list_body">
       <div class="user_info_wrapper">
-        <div class="avatar"></div>
+        <div class="clock_wrapper">
+          <div class="clock_box">
+            <p class="date">{{ date }}</p>
+            <p class="time">{{ time }}</p>
+          </div>
+        </div>
         <div class="user_info">
           <p>{{ userInfo.email }}</p>
           <p>{{ userInfo.username }}</p>
@@ -21,17 +26,20 @@
           <el-tab-pane v-for=" tab  in  tabsList " :key="tab.label" :label="$t(tab.label)">
             <div class="tab_content">
               <div class="product_wrapper">
-                <div class="product_info">
+                <div class="product_info" v-loading="loading">
                   <div class="chart">
-                    <PieChart :option="options" />
+                    <GaugeChart :option="options" />
                   </div>
                   <div class="button_wrapper">
-                    <el-button type="primary" size="large" @click="jumpApiHandler(tab.label.split('.')[1])">
-                      {{ $t('overview.startUsing') }}
-                    </el-button>
-                    <el-button type="primary" plain size="large" @click="jumpHandler(tab.label.split('.')[1])">
-                      {{ $t('overview.recharge') }}
-                    </el-button>
+                    <el-button :icon="RefreshLeft" @click="() => currentTab && currentTab.handler()" />
+                    <div class="jump_box">
+                      <el-button type="primary" size="large" @click="jumpApiHandler(tab.label.split('.')[1])">
+                        {{ $t('overview.startUsing') }}
+                      </el-button>
+                      <el-button type="primary" plain size="large" @click="jumpHandler(tab.label.split('.')[1])">
+                        {{ $t('overview.recharge') }}
+                      </el-button>
+                    </div>
                   </div>
                 </div>
                 <div class="product_order">
@@ -79,10 +87,10 @@
 
 <script setup lang='ts'>
 import { getToken, getUserInfo } from '@/utils/storage';
-import { ShoppingCart } from '@element-plus/icons-vue';
+import { RefreshLeft, ShoppingCart } from '@element-plus/icons-vue';
 import { onMounted, reactive, ref } from 'vue';
 import http from '~/api/http';
-import PieChart from './components/pieChart.vue';
+import GaugeChart from './components/GaugeChart.vue';
 
 const userInfo = reactive({
   circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
@@ -104,10 +112,11 @@ onMounted(() => {
 
 const options = reactive<any>({})
 const countValue = ref(0)
+const currentTab = ref<any>(null)
 const changeTabHandler = (tab: any) => {
-  const currentTab = tabsList.value[tab.index]
+  currentTab.value = tabsList.value[tab.index]
   countValue.value = 0
-  return currentTab.handler()
+  return currentTab.value.handler()
 }
 const dynamicResidentialHandler = () => {
   price.value = proxyPriceMap.value.DynamicResidential
@@ -166,6 +175,7 @@ const getProductData = () => {
     .then((res) => {
       console.log(res)
       proxyPriceMap.value = res
+      currentTab.value = tabsList.value[0]
       dynamicResidentialHandler()
     }).finally(() => {
       loading.value = false
@@ -181,7 +191,6 @@ const starterList = [
   '99.9% uptime.',
   'Invalid IP will not be billed'
 ]
-
 
 enum PricingTypeEnums {
   dynamicProxy = 'dynamicProxy',
@@ -221,11 +230,38 @@ const jumpApiHandler = (type: string) => {
   // return router.push('/login')
 }
 
+//clock
+const date = ref('')
+const time = ref('')
+const week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const timerID = ref();
+updateTime();
+function updateTime() {
+  var cd = new Date();
+  time.value = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
+  date.value = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth() + 1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' ' + week[cd.getDay()];
+};
+
+function zeroPadding(num: number, digit: number) {
+  var zero = '';
+  for (var i = 0; i < digit; i++) {
+    zero += '0';
+  }
+  return (zero + num).slice(-digit);
+}
+onMounted(() => {
+  timerID.value = setInterval(updateTime, 1000);
+})
+onUnmounted(() => {
+  clearInterval(timerID.value);
+})
+
 </script>
 
 <style lang="scss" scoped>
 .overview_wrapper {
   min-width: 1480px;
+
 
   .allow_list_header {
     padding: 0 40px;
@@ -263,6 +299,44 @@ const jumpApiHandler = (type: string) => {
   .avatar {
     width: 100px;
     height: 100px;
+  }
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
+  .clock_wrapper {
+    background: #0f3854;
+    background: radial-gradient(ellipse at center, #0a2e38 0%, #000000 70%);
+    background-size: 100%;
+    position: relative;
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+  }
+
+  .clock_box {
+    font-family: 'Poppins Medium';
+    color: #ffffff;
+    text-align: center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #daf6ff;
+    text-shadow: 0 0 20px rgba(10, 175, 230, 1), 0 0 20px rgba(10, 175, 230, 0);
+
+    .time {
+      letter-spacing: 0.05em;
+      font-size: 40px;
+    }
+
+    .date {
+      letter-spacing: 0.1em;
+      font-size: 14px;
+    }
+
   }
 
   .user_info {
@@ -319,28 +393,37 @@ const jumpApiHandler = (type: string) => {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding-top: 35px;
-    padding-left: 25px;
-    padding-right: 20px;
-    padding-bottom: 44px;
     box-sizing: border-box;
 
     .chart {
-      width: 275px;
+      width: 475px;
       height: 275px;
     }
 
     .button_wrapper {
+      padding-top: 35px;
+      padding-right: 20px;
+      padding-bottom: 44px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      >.el-button {
+        width: 32px;
+      }
     }
 
-    .el-button {
-      border-radius: 8px;
-      width: 167px;
-      margin: 0;
-      margin-top: 15px;
+    .jump_box {
+      display: flex;
+      flex-direction: column;
+
+      .el-button {
+        border-radius: 8px;
+        width: 167px;
+        margin: 0;
+        margin-top: 15px;
+      }
     }
   }
 
@@ -442,4 +525,4 @@ const jumpApiHandler = (type: string) => {
 .line_chart_box .el-tabs__header {
   margin: 0;
 }
-</style>
+</style>./components/GaugeChart.vue
