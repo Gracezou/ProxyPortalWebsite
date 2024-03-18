@@ -3,7 +3,7 @@
         <h1>{{ $t('home.coveringTitle') }}</h1>
         <p>{{ $t('home.coveringDesc') }}</p>
         <div class="covering_map">
-            <transition name="el-fade-in-linear">
+            <!-- <transition name="el-fade-in-linear">
                 <el-image v-if="mapLocation === 'north'" :src="map_north_america" fit="fill" />
             </transition>
             <transition name="el-fade-in-linear">
@@ -20,39 +20,109 @@
             </transition>
             <transition name="el-fade-in-linear">
                 <el-image v-if="mapLocation === 'africa'" :src="map_africa" fit="fill" />
-            </transition>
-            <transition name="el-fade-in-linear">
-                <el-image v-if="mapLocation === ''" :src="map" fit="fill" />
-            </transition>
+            </transition> -->
+            <img src="~/assets/image/map/map.svg" alt="">
+            <!-- <el-image src="~/assets/image/rubyproxy_logo.png" fit="fill" /> -->
+            <!-- <transition name="el-fade-in-linear">
+                <el-image src="~/assets/image/rubyproxy_logo.png" fit="fill" />
+               <el-image src="~/assets/image/map/map.svg" fit="fill" /> 
+            </transition> -->
+            <el-popover popper-class="map_pop" transition="el-zoom-in-bottom" placement="right-end" width="200"
+                trigger="hover">
+                <template #reference>
+                    <el-icon class="north">
+                        <Location />
+                    </el-icon>
+                </template>
+                <div class="content_wrapper">
+                    <h3>North America</h3>
+                    <p>Untited States 3,599,080 IPs</p>
+                    <p>Canada 2,704,625 IPs</p>
+                    <p>Mexico1,389,098 IPs</p>
+                </div>
+            </el-popover>
 
-            <el-icon class="north" @mouseenter="handleMouseEnter('north')" @mouseleave="handleMouseLeave">
-                <Location />
-            </el-icon>
-            <el-icon class="asia" @mouseenter="handleMouseEnter('asia')" @mouseleave="handleMouseLeave">
-                <Location />
-            </el-icon>
-            <el-icon class="australia" @mouseenter="handleMouseEnter('australia')" @mouseleave="handleMouseLeave">
-                <Location />
-            </el-icon>
-            <el-icon class="europe" @mouseenter="handleMouseEnter('europe')" @mouseleave="handleMouseLeave">
-                <Location />
-            </el-icon>
-            <el-icon class="africa" @mouseenter="handleMouseEnter('africa')" @mouseleave="handleMouseLeave">
-                <Location />
-            </el-icon>
-            <el-icon class="south" @mouseenter="handleMouseEnter('south')" @mouseleave="handleMouseLeave">
-                <Location />
-            </el-icon>
+            <el-popover popper-class="map_pop" transition="el-zoom-in-bottom" placement="right-end" width="200"
+                trigger="hover">
+                <template #reference>
+                    <el-icon class="asia">
+                        <Location />
+                    </el-icon>
+                </template>
+                <div class="content_wrapper">
+                    <h3>Asia</h3>
+                    <p>South Korea 1,047,582 IPs</p>
+                    <p>Malaysia 387,139 IPs</p>
+                    <p>Singapore 71,525 IPs</p>
+                </div>
+            </el-popover>
+
+            <el-popover popper-class="map_pop" transition="el-zoom-in-bottom" placement="left-end" width="200"
+                trigger="hover">
+                <template #reference>
+                    <el-icon class="australia">
+                        <Location />
+                    </el-icon>
+                </template>
+                <div class="content_wrapper">
+                    <h3>Oceania</h3>
+                    <p>Australia 116,391 IPs</p>
+                    <p>New Zealand 2,317,876 IPs</p>
+                </div>
+            </el-popover>
+
+            <el-popover popper-class="map_pop" transition="el-zoom-in-bottom" placement="right-end" width="200"
+                trigger="hover">
+                <template #reference>
+                    <el-icon class="europe">
+                        <Location />
+                    </el-icon>
+                </template>
+                <div class="content_wrapper">
+                    <h3>Europe</h3>
+                    <p>France 308,538 IPs</p>
+                    <p>United Kingdom 345,432 IPs</p>
+                </div>
+            </el-popover>
+
+            <el-popover popper-class="map_pop" transition="el-zoom-in-bottom" placement="left-end" width="200"
+                trigger="hover">
+                <template #reference>
+                    <el-icon class="africa">
+                        <Location />
+                    </el-icon>
+                </template>
+                <div class="content_wrapper">
+                    <h3>Africa</h3>
+                    <p>South Africa 1,047,582 IPs</p>
+                    <p>Algeria 1,826,593 IPs</p>
+                </div>
+            </el-popover>
+
+            <el-popover popper-class="map_pop" transition="el-zoom-in-bottom" placement="left-end" width="200"
+                trigger="hover">
+                <template #reference>
+                    <el-icon class="south">
+                        <Location />
+                    </el-icon>
+                </template>
+                <div class="content_wrapper">
+                    <h3>South America</h3>
+                    <p>Argentina 824,726 IPs</p>
+                    <p>Brazil 1,094,862 IPs</p>
+                </div>
+            </el-popover>
         </div>
     </div>
 </template>
 
 <script setup lang='ts'>
 import { Location } from '@element-plus/icons-vue';
-import { map, map_africa, map_asia, map_australia, map_europe, map_north_america, map_south_america } from '~/assets/image/map/map';
 const mapLocation = ref('');
+const isInfoBoxVisible = ref(false);
 const handleMouseEnter = (location: string) => {
     mapLocation.value = location;
+    isInfoBoxVisible.value = true;
 };
 const handleMouseLeave = () => {
     mapLocation.value = '';
@@ -102,11 +172,12 @@ const handleMouseLeave = () => {
 .covering_map {
     height: 560px;
     width: 1320px;
-    background-color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    background: #091E2E;
+    border-radius: 8px;
 
     .el-image {
         position: absolute;
@@ -121,39 +192,59 @@ const handleMouseLeave = () => {
     .el-icon {
         position: absolute;
         font-size: 27px;
-        color: #fff;
+        color: #d41010;
         z-index: 20;
         cursor: pointer;
     }
 
     .north {
-        top: 156px;
-        left: 317px;
+        top: 190px;
+        left: 450px;
     }
 
     .south {
         top: 374px;
-        left: 432px;
+        left: 505px;
     }
 
     .asia {
         top: 195px;
-        left: 991px;
+        left: 890px;
     }
 
     .australia {
-        top: 409px;
-        left: 1071px;
+        top: 370px;
+        left: 920px;
     }
 
     .europe {
-        top: 115px;
-        left: 648px;
+        top: 180px;
+        left: 670px;
     }
 
     .africa {
         top: 300px;
-        left: 724px;
+        left: 670px;
+    }
+}
+</style>
+<style lang="scss">
+.map_pop {
+    opacity: 0.9;
+    --el-popover-bg-color: #F2F2F2;
+    --el-border-color-light: #797979;
+    color: #333333;
+    --el-popover-padding: 10px;
+
+    h3 {
+        margin-top: 0;
+        font-size: 16px;
+        font-family: 'Poppins Medium';
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 13px;
     }
 }
 </style>

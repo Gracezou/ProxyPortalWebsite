@@ -33,8 +33,9 @@ export default {
   region: "Region",
   username: "Username",
   paramProtocal: "Protocol （http:HTTP/HTTPS socks5:SOCKS5）",
-  dataType: "Data Format （json:JSON txt:文本）",
+  dataType: "Data Format （json:JSON txt:TXT）",
   delimiterType: "Delimiter （\\r\\n:Line break ,:Comma |:Vertical line)",
   ipAddress: "IP Address",
   port: "Port",
+  global: "Global Random",
 }

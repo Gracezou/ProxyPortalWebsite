@@ -27,8 +27,10 @@
           <el-table-column prop="PackageTraffic" :label="$t('dynamic.history.packagedTraffic')" :align="'center'" />
           <el-table-column prop="GiftTraffic" :label="$t('dynamic.history.giftTraffic')" :align="'center'" />
           <el-table-column prop="Duration" :label="$t('dynamic.history.duration')" :align="'center'" />
-          <el-table-column prop="ExpireTime" :label="$t('dynamic.history.expiredTime')" :align="'center'" />
-          <el-table-column prop="PaymentTime" :label="$t('dynamic.history.paymentTime')" :align="'center'" />
+          <el-table-column prop="ExpireTime" :label="$t('dynamic.history.expiredTime')" :align="'center'"
+            :formatter="(__, _, value) => formatShowTime(value)" />
+          <el-table-column prop="PaymentTime" :label="$t('dynamic.history.paymentTime')" :align="'center'"
+            :formatter="(__, _, value) => formatShowTime(value)" />
           <el-table-column prop="PaymentStatus" :label="$t('dynamic.history.paymentStatus')" :align="'center'"
             :formatter="parsePaymentStatus" />
         </el-table>
@@ -41,6 +43,7 @@
 
 <script setup lang='ts'>
 import http from '~/api/http';
+import { formatShowTime } from '~/utils/form';
 const tableData = ref([])
 const loading = ref(false)
 const pagination = reactive({
@@ -223,12 +226,11 @@ const changePageHandler = (val: number) => {
 
   .header_cell_custom {
     padding: 0;
+    --el-table-header-bg-color: #F2F2F2;
 
     .cell {
       line-height: 46px;
-      background-color: #F2F2F2;
     }
-
   }
 }
 </style>

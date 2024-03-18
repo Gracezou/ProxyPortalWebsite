@@ -3,7 +3,8 @@
     <div class="allow_list_header">
       <h1>{{ $t('dynamic.history.title') }}</h1>
     </div>
-    <DynamicProxyListComp :data="dynamicProxyList" @order="createOrderHandler" />
+    <DynamicProxyListComp :data="dynamicProxyList" :dynamic-type="true" :starter-list="dynamicStarterList"
+      @order="createOrderHandler" />
     <CreateOrder v-model="createOrderVisible" :data="currentProduct" />
 
   </div>
@@ -16,6 +17,15 @@ import CreateOrder from '../components/CreateOrder.vue';
 onMounted(() => {
   getProductData()
 })
+const dynamicStarterList = [
+  'US, BR preferred.',
+  'City-level precision.',
+  'HTTP/HTTPS.',
+  'Unlimited access.',
+  'IP lasts for 90 minutes',
+  '99.9% uptime.',
+  'Invalid IP will not be billed'
+]
 
 const loading = ref(false)
 const dynamicProxyList = ref([])

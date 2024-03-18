@@ -50,17 +50,20 @@ export default {
   "globalDetail": "穩定支持超過220個國際地區。",
   "rubyProxy": "RubyProxy Chrome擴展",
   "rubyProxyDetail": "即將推出",
-
   // sidebar
-  "overview": "Overview",
+  "overview": "概览",
+  "proxy": "代理",
   "apiMenu": "API",
-  "userAuth": "User Auth",
-  "subAccount": "Sub-account",
-  "ipAllowList": "IP Allowlist",
-
-  "dynamicProxy": "Dynamic Residential Proxy",
-  "rotatingDataCenterProxy": "Rotating Datacenter Proxy",
-  "rotatingIspProxy": "Rotating ISP Proxy",
-  "staticResidentialProxy": "Static Residential Proxy",
-  "staticDataCenterProxy": "Static Datacenter Proxy"
+  "userAuth": "用戶認證",
+  "subAccount": "子帳戶",
+  "ipAllowList": "IP允許清單",
+  "products": "產品",
+  "dynamicProxy": "動態住宅代理",
+  "rotatingDataCenterProxy": "旋轉數據中心代理",
+  "rotatingIspProxy": "旋轉ISP代理",
+  "staticResidentialProxy": "靜態住宅代理",
+  "staticDataCenterProxy": "靜態數據中心代理",
+  "purchaseProxy": "購買代理",
+  "paymentHistory": "付款記錄",
+  "manageProxy": "管理代理"
 }

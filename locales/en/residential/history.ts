@@ -1,3 +1,4 @@
+
 export default {
   title: 'Static Residential Proxy',
   startTime: 'Start Time',
@@ -8,8 +9,7 @@ export default {
   orderId: 'Order ID',
   orderAmount: 'Order Amount',
   paymentMethod: 'Payment Method',
-  packagedTraffic: 'Packaged Traffic',
-  giftTraffic: 'Gift Traffic',
+  quantity: 'Quantity',
   expiredTime: 'Expired Time',
   duration: 'Duration',
   paymentTime: 'Payment Time',

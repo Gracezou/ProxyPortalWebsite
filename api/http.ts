@@ -2,7 +2,6 @@ import { getToken, removeToken, removeUserInfo } from '@/utils/storage';
 import type { AxiosResponse } from 'axios';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import { useRouter } from 'vue-router';
 const http = axios.create()
 // 基础路径
 export const BASE_URL = 'https://api.rubyproxy.com'
@@ -46,11 +45,12 @@ http.interceptors.response.use(
     return Promise.reject(new HttpError(response))
   },
   (error) => {
+    console.log('error', error)
     if (!error.response) return ElMessage({ type: 'error', message: 'server error', grouping: true })
     if (error.response.status == 401) {
       removeToken()
       removeUserInfo()
-      useRouter().push('/login')
+      navigateTo('/login')
     } else if (error.response.status == 422) {
       // 参数错误
       ElMessage({ type: 'error', message: "params is error", grouping: true })

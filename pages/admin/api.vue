@@ -1,5 +1,5 @@
 <template>
-  <div class="allow_list_wrapper" v-loading="loading">
+  <div class="allow_list_wrapper">
     <div class="allow_list_header">
       <h1>{{ $t('api.title') }}</h1>
     </div>
@@ -7,8 +7,11 @@
     <el-tabs type="border-card" v-model="tabName" @tab-click="changeTabHandler">
       <el-tab-pane v-for="tab in tabsList" :key="tab.label" :name="tab.label" :label="$t(tab.label)">
         <div class="tab_content">
-          <span class="content_label"> {{ $t(tab.valueLabel) }}:</span>
-          <span class="content_value"> {{ countValue }} {{ $t(tab.unit) }}</span>
+          <div class="info">
+            <span class="content_label"> {{ $t(tab.valueLabel) }}:</span>
+            <span class="content_value"> {{ countValue }} {{ $t(tab.unit) }}</span>
+          </div>
+          <el-button :icon="RefreshLeft" @click="refreshHandler" />
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -21,9 +24,9 @@
               <el-input-number v-model="form.num" :max="numberMax" :controls="false" clearable />
             </el-form-item>
             <el-form-item :label="$t('api.chooseRegion')">
-              <el-select v-model="form.regions" clearable>
-                <el-option v-for="region in regionsList" :key="region.value" :label="region.label"
-                  :value="region.value" />
+              <el-select v-model="form.regions" filterable clearable>
+                <el-option v-for="region in regionsList" :key="region.value"
+                  :label="region.label.includes('api') ? $t(region.label) : region.label" :value="region.value" />
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('api.protocol')">
@@ -43,8 +46,9 @@
               </el-select>
             </el-form-item>
             <div class="gen_button_box">
-              <el-button type="primary" size="large" class="green_style" @click="generateUrlHandler">{{
-    $t('api.generateLink') }}</el-button>
+              <el-button type="primary" size="large" class="green_style" @click="generateUrlHandler">
+                {{ $t('api.generateLink') }}
+              </el-button>
             </div>
           </el-form>
         </client-only>
@@ -57,10 +61,12 @@
             <div class="red">{{ $t('api.testTips') }}</div>
           </div>
           <div class="button_box">
-            <el-button type="primary" size="large" class="green_style" @click="copyUrlHandler">{{ $t('api.copyLink')
-              }}</el-button>
-            <el-button type="primary" size="large" class="red_style" @click="openUrlHandler">{{ $t('api.openLink')
-              }}</el-button>
+            <el-button type="primary" size="large" class="green_style" @click="copyUrlHandler">
+              {{ $t('api.copyLink') }}
+            </el-button>
+            <el-button type="primary" size="large" class="red_style" @click="openUrlHandler">
+              {{ $t('api.openLink') }}
+            </el-button>
           </div>
         </div>
         <div class="code_box">
@@ -73,8 +79,10 @@
         <el-table :data="paramsInterfaceData">
           <el-table-column prop="name" :label="$t('api.name')" :align="'center'" />
           <el-table-column prop="type" :label="$t('api.type')" :align="'center'" />
-          <el-table-column prop="require" :label="$t('api.required')" :align="'center'" />
-          <el-table-column prop="desc" :label="$t('api.description')" :align="'center'" />
+          <el-table-column prop="require" :label="$t('api.required')" :align="'center'"
+            :formatter="(_, __, value) => `${$t(value)}`" />
+          <el-table-column prop="desc" :label="$t('api.description')" :align="'center'"
+            :formatter="(_, __, value) => `${$t(value)}`" />
         </el-table>
         <h4>{{ $t('api.resultExample') }}：</h4>
         <pre class="hljs language-json">
@@ -92,16 +100,17 @@
         <el-table :data="resultInterfaceData">
           <el-table-column prop="name" :label="$t('api.name')" :align="'center'" />
           <el-table-column prop="type" :label="$t('api.type')" :align="'center'" />
-          <el-table-column prop="desc" :label="$t('api.description')" :align="'center'" />
+          <el-table-column prop="desc" :label="$t('api.description')" :align="'center'"
+            :formatter="(_, __, value) => `${$t(value)}`" />
         </el-table>
       </div>
     </div>
-    <PieChart :option="option" />
   </div>
 </template>
 
 <script setup lang='ts'>
-import { cloneDeep, isEmpty } from 'lodash-es';
+import { RefreshLeft, } from '@element-plus/icons-vue';
+import { cloneDeep } from 'lodash-es';
 import http, { BASE_URL } from '~/api/http';
 //  # 分隔符(1:\r\n 2:/br 3:\r 4:\n 5:\t )
 const delimiterOptions = ref([
@@ -115,8 +124,7 @@ const numberMax = ref(1000)
 
 const countValue = ref(0)
 const regionsList = ref<{ label: string, value: string }[]>([])
-const loading = ref(false)
-const tabName = ref('')
+const tabName = ref('api.dynamicProxy')
 const changeTabHandler = (tab: any) => {
   const currentTab = tabsList.value[tab.index]
   resetData()
@@ -124,28 +132,42 @@ const changeTabHandler = (tab: any) => {
 }
 const route = useRoute()
 onMounted(() => {
-  console.log(route.query)
-  switch (route.query.type) {
-    case 'RotatingDatacenter':
-    case 'rotatingDataCenterProxy':
-      tabName.value = 'api.rotatingDataCenterProxy'
-      rotatingDataCenterHandler()
-      break
-    case 'StaticResidential':
-    case 'staticResidentialProxy':
-      tabName.value = 'api.staticResidentialProxy'
-      staticResidentialHandler()
-      break
-    case 'StaticDatacenter':
-    case 'staticDataCenterProxy':
-      tabName.value = 'api.staticDataCenterProxy'
-      staticDataCenterHandler()
-      break
-    default:
-      tabName.value = 'api.dynamicProxy'
-      dynamicResidentialHandler()
-  }
+  Promise.all([
+    getDynamicResidential(),
+    getRotatingDataCenter(),
+    getStaticResidential(),
+    getStaticDataCenter()
+  ]).then(() => {
+    switch (route.query.type) {
+      case 'RotatingDatacenter':
+      case 'rotatingDataCenterProxy':
+        tabName.value = 'api.rotatingDataCenterProxy'
+        rotatingDataCenterHandler()
+        break
+      case 'StaticResidential':
+      case 'staticResidentialProxy':
+        tabName.value = 'api.staticResidentialProxy'
+        staticResidentialHandler()
+        break
+      case 'StaticDatacenter':
+      case 'staticDataCenterProxy':
+        tabName.value = 'api.staticDataCenterProxy'
+        staticDataCenterHandler()
+        break
+      default:
+        tabName.value = 'api.dynamicProxy'
+        dynamicResidentialHandler()
+    }
+  })
 })
+
+const refreshHandler = () => {
+  const currentTab = tabsList.value.find(tab => tab.label === tabName.value)
+  if (!currentTab) return
+  currentTab.refreshHandler().then(() =>
+    currentTab.handler()
+  )
+}
 
 const resetData = () => {
   countValue.value = 0
@@ -153,77 +175,114 @@ const resetData = () => {
   generateUrl.value = ''
   form.regions = ''
 }
-
+const cookieLang = useCookie('lang')
+const dynamicResidentialData = ref<any>({
+  numberMax: 1000,
+  countValue: 0,
+  regionsList: [],
+})
 const dynamicResidentialHandler = () => {
-  loading.value = true
+  numberMax.value = dynamicResidentialData.value.numberMax
+  countValue.value = dynamicResidentialData.value.countValue
+  regionsList.value = dynamicResidentialData.value.regionsList
+  form.num = 100
+}
+const getDynamicResidential = () =>
   Promise.all([
     http.get('/v1/website/current_user_info'),
     http.get('/v1/website/regions/DynamicResidential')
   ]).then(([flowResult, regionResult]: any) => {
-    numberMax.value = 1000
+    dynamicResidentialData.value.numberMax = 1000
     const flow = flowResult.DynamicResidentialProxyUsage
     if (flow) {
-      countValue.value = (flow.last_flow) / 1000 || 0
+      dynamicResidentialData.value.countValue = (flow.last_flow) / 1000 || 0
     }
-    const country_list: string[] = isEmpty(regionResult.continent) ? [] : Object.values(regionResult.continent)
-    regionsList.value = country_list.map((item: string) => {
-      return { label: item, value: item }
-    })
-  }).finally(() => {
-    loading.value = false
-  })
-}
 
+    const countryList = regionResult.country.map((item: any) => {
+      return item.list.map((country: any) => {
+        return { label: cookieLang.value === 'zh' ? country.name : country.name_en, value: country.code }
+      })
+    })
+    dynamicResidentialData.value.regionsList = countryList.flat()
+    dynamicResidentialData.value.regionsList.unshift({ label: 'api.global', value: 'custom' })
+  })
+
+
+const rotatingDataCenterData = ref<any>({
+  numberMax: 1000,
+  countValue: 0,
+  regionsList: [],
+})
 const rotatingDataCenterHandler = () => {
-  loading.value = true
+  numberMax.value = rotatingDataCenterData.value.numberMax
+  countValue.value = rotatingDataCenterData.value.countValue
+  regionsList.value = rotatingDataCenterData.value.regionsList
+  form.num = 100
+}
+const getRotatingDataCenter = () =>
   Promise.all([
     http.get('/v1/website/overview/RotatingDatacenter'),
     http.get('/v1/website/regions/RotatingDatacenter')
   ]).then(([flowResult, regionResult]: any) => {
-    numberMax.value = 1000
-    countValue.value = (flowResult.total_flow - flowResult.used_flow) / 1000
-    regionsList.value = regionResult.map((item: any) => {
-      return { label: item.country_name, value: item.country_code }
+    rotatingDataCenterData.value.numberMax = 1000
+    rotatingDataCenterData.value.countValue = Math.ceil((parseFloat(flowResult.total_flow) - parseFloat(flowResult.used_flow)) / 1000)
+    rotatingDataCenterData.value.regionsList = regionResult.map((item: any) => {
+      return { label: cookieLang.value === 'zh' ? item.country_name : item.country_name_en, value: item.country_code }
     })
-    console.log(regionsList.value)
-  }).finally(() => {
-    loading.value = false
+    rotatingDataCenterData.value.regionsList.unshift({ label: 'api.global', value: 'custom' })
   })
 
-}
 
+const staticResidentialData = ref<any>({
+  numberMax: 1000,
+  countValue: 0,
+  regionsList: [],
+})
 const staticResidentialHandler = () => {
-  loading.value = true
-  http.get('/v1/website/Usage/StaticDatacenter').then((res: any) => {
-    countValue.value = res.quantity
-    numberMax.value = res.quantity
-    regionsList.value = res.country_list.map((item: string) => {
-      return { label: item, value: item }
-    })
-  }).finally(() => {
-    loading.value = false
-  })
+  numberMax.value = staticResidentialData.value.numberMax
+  countValue.value = staticResidentialData.value.countValue
+  regionsList.value = staticResidentialData.value.regionsList
+  form.num = staticResidentialData.value.numberMax
 }
 
-const staticDataCenterHandler = () => {
-  resetData()
-  loading.value = true
-  http.get('/v1/website/Usage/StaticResidential').then((res: any) => {
-    countValue.value = res.quantity
-    numberMax.value = res.quantity
-    regionsList.value = res.country_list.map((item: string) => {
+const getStaticResidential = () =>
+  http.get('/v1/website/Usage/StaticDatacenter').then((res: any) => {
+    staticResidentialData.value.numberMax = res.quantity
+    staticResidentialData.value.countValue = res.quantity
+    staticResidentialData.value.regionsList = res.country_list.map((item: string) => {
       return { label: item, value: item }
     })
-  }).finally(() => {
-    loading.value = false
+    staticResidentialData.value.regionsList.unshift({ label: 'api.global', value: 'custom' })
   })
+
+const staticDataCenterData = ref<any>({
+  numberMax: 1000,
+  countValue: 0,
+  regionsList: [],
+})
+const staticDataCenterHandler = () => {
+  numberMax.value = staticDataCenterData.value.numberMax
+  countValue.value = staticDataCenterData.value.countValue
+  regionsList.value = staticDataCenterData.value.regionsList
+  form.num = staticDataCenterData.value.numberMax
 }
+
+const getStaticDataCenter = () =>
+  http.get('/v1/website/Usage/StaticResidential').then((res: any) => {
+    staticDataCenterData.value.numberMax = res.quantity
+    staticDataCenterData.value.countValue = res.quantity
+    staticDataCenterData.value.regionsList = res.country_list.map((item: string) => {
+      return { label: item, value: item }
+    })
+    staticDataCenterData.value.regionsList.unshift({ label: 'api.global', value: 'custom' })
+  })
+
 
 const tabsList = ref([
-  { label: 'api.dynamicProxy', handler: dynamicResidentialHandler, valueLabel: 'api.trafficRemain', unit: 'api.MB', generateUrl: '/v1/website/generate/DynamicResidential' },
-  { label: 'api.rotatingDataCenterProxy', handler: rotatingDataCenterHandler, valueLabel: 'api.trafficRemain', unit: 'api.GB', generateUrl: '/v1/website/generate/RotatingDatacenter' },
-  { label: 'api.staticResidentialProxy', handler: staticResidentialHandler, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticResidential' },
-  { label: 'api.staticDataCenterProxy', handler: staticDataCenterHandler, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticDatacenter' },
+  { label: 'api.dynamicProxy', handler: dynamicResidentialHandler, refreshHandler: getDynamicResidential, valueLabel: 'api.trafficRemain', unit: 'api.MB', generateUrl: '/v1/website/generate/DynamicResidential' },
+  { label: 'api.rotatingDataCenterProxy', handler: rotatingDataCenterHandler, refreshHandler: getRotatingDataCenter, valueLabel: 'api.trafficRemain', unit: 'api.GB', generateUrl: '/v1/website/generate/RotatingDatacenter' },
+  { label: 'api.staticResidentialProxy', handler: staticResidentialHandler, refreshHandler: getStaticResidential, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticResidential' },
+  { label: 'api.staticDataCenterProxy', handler: staticDataCenterHandler, refreshHandler: getStaticDataCenter, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticDatacenter' },
 ])
 
 const form = reactive({
@@ -236,7 +295,6 @@ const form = reactive({
 
 const generateUrl = ref('')
 const generateUrlHandler = () => {
-  // loading.value = true
   const params: any = cloneDeep(form)
   params.username = 'admin'
   const baseUrl = BASE_URL
@@ -280,6 +338,7 @@ const option = ref({})
 
 <style scoped lang="scss">
 .allow_list_wrapper {
+
   .allow_list_header {
     padding: 0 40px;
     display: flex;
@@ -301,10 +360,18 @@ const option = ref({})
     padding: 40px;
   }
 
+
   .tab_content {
     height: 72px;
     display: flex;
-    align-items: flex-end;
+    justify-content: space-between;
+    align-items: center;
+
+    >.el-button {
+      margin-right: 20px;
+      width: 40px;
+      height: 40px;
+    }
 
   }
 
@@ -412,6 +479,10 @@ const option = ref({})
     text-align: left;
     color: #5fcf3f;
     line-height: 80px;
+    // 省略号
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
 }
@@ -469,6 +540,7 @@ const option = ref({})
       border-left: 4px solid #316BFF;
       border-right: 4px solid #316BFF;
       border-bottom: 4px solid #316BFF;
+      min-height: 70px;
     }
 
     &.el-tabs--border-card>.el-tabs__header .el-tabs__item:first-child {

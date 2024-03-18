@@ -20,11 +20,21 @@ watchEffect(() => {
 })
 
 const getOptions = (data: any) => {
+  let persent = 0
+  const useFlow = parseFloat(data.use_flow)
+  const totalFlow = parseFloat(data.total_flow)
+  if (totalFlow) {
+    persent = Math.ceil((useFlow / totalFlow) * 100)
+  }
+  let formatterText = `${Number(useFlow).toFixed(2)}GB / ${Number(totalFlow).toFixed(2)}GB`
+  if (data.static) {
+    formatterText = `${Number(useFlow)} IP`
+  }
   return {
     series: [
       {
         type: 'gauge',
-        max: data.total_flow,
+        max: 100,
         progress: {
           show: true,
           width: 10
@@ -65,12 +75,15 @@ const getOptions = (data: any) => {
         },
         detail: {
           valueAnimation: true,
-          fontSize: 20,
-          offsetCenter: [0, '70%']
+          fontSize: 18,
+          offsetCenter: [0, '90%'],
+          formatter: function () {
+            return formatterText;
+          }
         },
         data: [
           {
-            value: data.use_flow,
+            value: persent,
           }
         ]
       }

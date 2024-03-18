@@ -24,11 +24,12 @@
           <el-table-column prop="OrderID" :align="'center'" :label="$t('datacenter.history.orderId')" />
           <el-table-column prop="Amount" :align="'center'" :label="$t('datacenter.history.orderAmount')" />
           <el-table-column prop="PaymentMethod" :label="$t('datacenter.history.paymentMethod')" :align="'center'" />
-          <el-table-column prop="PackageTraffic" :label="$t('datacenter.history.packagedTraffic')" :align="'center'" />
-          <el-table-column prop="GiftTraffic" :label="$t('datacenter.history.giftTraffic')" :align="'center'" />
+          <el-table-column prop="Quantity" :label="$t('datacenter.history.quantity')" :align="'center'" />
           <el-table-column prop="Duration" :label="$t('datacenter.history.duration')" :align="'center'" />
-          <el-table-column prop="ExpireTime" :label="$t('datacenter.history.expiredTime')" :align="'center'" />
-          <el-table-column prop="PaymentTime" :label="$t('datacenter.history.paymentTime')" :align="'center'" />
+          <el-table-column prop="ExpireTime" :label="$t('datacenter.history.expiredTime')" :align="'center'"
+            :formatter="(__, _, value) => formatShowTime(value)" />
+          <el-table-column prop="PaymentTime" :label="$t('datacenter.history.paymentTime')" :align="'center'"
+            :formatter="(__, _, value) => formatShowTime(value)" />
           <el-table-column prop="PaymentStatus" :label="$t('datacenter.history.paymentStatus')" :align="'center'"
             :formatter="parsePaymentStatus" />
         </el-table>
@@ -41,6 +42,7 @@
 
 <script setup lang='ts'>
 import http from '~/api/http';
+import { formatShowTime } from '~/utils/form';
 const tableData = ref([])
 const loading = ref(false)
 const pagination = reactive({
@@ -224,12 +226,11 @@ const changePageHandler = (val: number) => {
 
   .header_cell_custom {
     padding: 0;
+    --el-table-header-bg-color: #F2F2F2;
 
     .cell {
       line-height: 46px;
-      background-color: #F2F2F2;
     }
-
   }
 }
 </style>

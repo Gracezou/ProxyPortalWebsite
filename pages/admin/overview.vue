@@ -31,7 +31,7 @@
                     <GaugeChart :option="options" />
                   </div>
                   <div class="button_wrapper">
-                    <el-button :icon="RefreshLeft" @click="() => currentTab && currentTab.handler()" />
+                    <el-button :icon="RefreshLeft" @click="refreshHandler" />
                     <div class="jump_box">
                       <el-button type="primary" size="large" @click="jumpApiHandler(tab.label.split('.')[1])">
                         {{ $t('overview.startUsing') }}
@@ -44,11 +44,11 @@
                 </div>
                 <div class="product_order">
                   <h3> {{ $t('overview.startFrom') }}</h3>
-                  <p><span>{{ price }}</span>/GB</p>
+                  <p><span>{{ price }}</span>/{{ tab.unit }}</p>
                   <div class="list_box">
                     <p>{{ $t('overview.starterInclude') }}</p>
                     <ul>
-                      <li v-for="str in starterList"> {{ str }}</li>
+                      <li v-for="str in tab.starterList"> {{ str }}</li>
                     </ul>
                   </div>
                   <el-button type="primary" size="large" :icon="ShoppingCart"
@@ -118,68 +118,105 @@ const changeTabHandler = (tab: any) => {
   countValue.value = 0
   return currentTab.value.handler()
 }
-const dynamicResidentialHandler = () => {
-  price.value = proxyPriceMap.value.DynamicResidential
-  loading.value = true
+const dynamicResidentialOptions = {
+  use_flow: 0,
+  total_flow: 0,
+  last_flow: 0,
+}
+const getDynamicResidential = () =>
   http.get('/v1/website/current_user_info')
     .then((res: any) => {
-      options.last_flow = res.DynamicResidentialProxyUsage.last_flow / 1000 || 0
-      options.total_flow = res.DynamicResidentialProxyUsage.total_flow / 1000 || 0
-      options.use_flow = res.DynamicResidentialProxyUsage.use_flow / 1000 || 0
-    }).finally(() => {
-      loading.value = false
+      dynamicResidentialOptions.last_flow = res.DynamicResidentialProxyUsage.last_flow / 1000 || 0
+      dynamicResidentialOptions.total_flow = res.DynamicResidentialProxyUsage.total_flow / 1000 || 0
+      dynamicResidentialOptions.use_flow = res.DynamicResidentialProxyUsage.use_flow / 1000 || 0
     })
+const dynamicResidentialHandler = () => {
+  price.value = proxyPriceMap.value.DynamicResidential
+  options.last_flow = dynamicResidentialOptions.last_flow / 1000 || 0
+  options.total_flow = dynamicResidentialOptions.total_flow / 1000 || 0
+  options.use_flow = dynamicResidentialOptions.use_flow / 1000 || 0
+  options.static = false
 }
-const rotatingDataCenterHandler = () => {
-  price.value = proxyPriceMap.value.RotatingDatacenter
-  loading.value = true
+const rotatingDataCenterOptions = {
+  use_flow: 0,
+  total_flow: 0,
+  last_flow: 0,
+}
+const getRotatingDataCenter = () =>
   http.get('/v1/website/overview/RotatingDatacenter')
     .then((res: any) => {
-      options.last_flow = res.last_flow / 1000 || 0
-      options.total_flow = res.total_flow / 1000 || 0
-      options.use_flow = res.used_flow / 1000 || 0
-    }).finally(() => {
-      loading.value = false
+      rotatingDataCenterOptions.last_flow = res.last_flow / 1000 || 0
+      rotatingDataCenterOptions.total_flow = res.total_flow / 1000 || 0
+      rotatingDataCenterOptions.use_flow = res.used_flow / 1000 || 0
     })
+
+const rotatingDataCenterHandler = () => {
+  price.value = proxyPriceMap.value.RotatingDatacenter
+  options.last_flow = rotatingDataCenterOptions.last_flow / 1000 || 0
+  options.total_flow = rotatingDataCenterOptions.total_flow / 1000 || 0
+  options.use_flow = rotatingDataCenterOptions.use_flow / 1000 || 0
+  options.static = false
 }
-const staticResidentialHandler = () => {
-  loading.value = true
-  price.value = proxyPriceMap.value.StaticResidential
-  http.get('/v1/website/Usage/StaticDatacenter')
-    .then((res: any) => {
-      options.last_flow = res.quantity || 0
-      options.total_flow = res.quantity || 0
-      options.use_flow = res.quantity || 0
-    }).finally(() => {
-      loading.value = false
-    })
+
+const staticResidentialOptions = {
+  use_flow: 0,
+  total_flow: 0,
+  last_flow: 0,
 }
-const staticDataCenterHandler = () => {
-  loading.value = true
-  price.value = proxyPriceMap.value.StaticDatacenter
+const getStaticResidential = () =>
   http.get('/v1/website/Usage/StaticResidential')
     .then((res: any) => {
-      options.last_flow = res.quantity || 0
-      options.total_flow = res.quantity || 0
-      options.use_flow = res.quantity || 0
-    }).finally(() => {
-      loading.value = false
+      staticResidentialOptions.last_flow = res.quantity || 0
+      staticResidentialOptions.total_flow = res.quantity || 0
+      staticResidentialOptions.use_flow = res.quantity || 0
     })
+
+const staticResidentialHandler = () => {
+  price.value = proxyPriceMap.value.StaticResidential
+  options.last_flow = staticResidentialOptions.last_flow || 0
+  options.total_flow = staticResidentialOptions.total_flow || 0
+  options.use_flow = staticResidentialOptions.use_flow || 0
+  options.static = true
+}
+
+const staticDataCenterOptions = {
+  use_flow: 0,
+  total_flow: 0,
+  last_flow: 0,
+}
+const getStaticDataCenter = () =>
+  http.get('/v1/website/Usage/StaticDatacenter')
+    .then((res: any) => {
+      staticDataCenterOptions.last_flow = res.quantity || 0
+      staticDataCenterOptions.total_flow = res.quantity || 0
+      staticDataCenterOptions.use_flow = res.quantity || 0
+    })
+
+const staticDataCenterHandler = () => {
+  price.value = proxyPriceMap.value.StaticDatacenter
+  options.last_flow = staticDataCenterOptions.last_flow || 0
+  options.total_flow = staticDataCenterOptions.total_flow || 0
+  options.use_flow = staticDataCenterOptions.use_flow || 0
+  options.static = true
 }
 
 const loading = ref(false)
 const proxyPriceMap = ref<any>({})
 const getProductData = () => {
   loading.value = true
-  http.get('/v1/website/overview/price')
-    .then((res) => {
-      console.log(res)
-      proxyPriceMap.value = res
-      currentTab.value = tabsList.value[0]
-      dynamicResidentialHandler()
-    }).finally(() => {
-      loading.value = false
-    })
+  Promise.all([
+    http.get('/v1/website/overview/price'),
+    getDynamicResidential(),
+    getRotatingDataCenter(),
+    getStaticResidential(),
+    getStaticDataCenter(),
+  ]).then(([res]) => {
+    proxyPriceMap.value = res
+    currentTab.value = tabsList.value[0]
+    dynamicResidentialHandler()
+  }).finally(() => {
+    loading.value = false
+  })
 }
 const price = ref(0)
 const starterList = [
@@ -191,6 +228,16 @@ const starterList = [
   '99.9% uptime.',
   'Invalid IP will not be billed'
 ]
+const rotatingDataCenterStarterList = [
+  '500,000 datacenter IPs',
+  '220+ regions and countries',
+  'HTTP/HTTPS.',
+  'Traffic history monitoring',
+  'Bulk proxies generation',
+  '99.9% uptime.',
+  'Invalid IP will not be billed'
+]
+
 
 enum PricingTypeEnums {
   dynamicProxy = 'dynamicProxy',
@@ -200,11 +247,20 @@ enum PricingTypeEnums {
   staticDataCenterProxy = 'staticDataCenterProxy',
 }
 const tabsList = ref([
-  { label: 'overview.dynamicProxy', handler: dynamicResidentialHandler, },
-  { label: 'overview.rotatingDataCenterProxy', handler: rotatingDataCenterHandler, },
-  { label: 'overview.staticResidentialProxy', handler: staticResidentialHandler, },
-  { label: 'overview.staticDataCenterProxy', handler: staticDataCenterHandler, },
+  { label: 'overview.dynamicProxy', handler: dynamicResidentialHandler, refreshHandler: getDynamicResidential, unit: 'GB', starterList },
+  { label: 'overview.rotatingDataCenterProxy', handler: rotatingDataCenterHandler, refreshHandler: getRotatingDataCenter, unit: 'GB', starterList: rotatingDataCenterStarterList },
+  { label: 'overview.staticResidentialProxy', handler: staticResidentialHandler, refreshHandler: getStaticResidential, unit: 'IP', starterList },
+  { label: 'overview.staticDataCenterProxy', handler: staticDataCenterHandler, refreshHandler: getStaticDataCenter, unit: 'IP', starterList },
 ])
+
+const refreshHandler = () => {
+  loading.value = true
+  currentTab.value.refreshHandler().then(() => {
+    currentTab.value.handler()
+  }).finally(() => {
+    loading.value = false
+  })
+}
 
 const router = useRouter()
 const jumpHandler = (type: string) => {
@@ -261,7 +317,6 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .overview_wrapper {
   min-width: 1480px;
-
 
   .allow_list_header {
     padding: 0 40px;

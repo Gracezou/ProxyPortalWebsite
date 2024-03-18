@@ -1,3 +1,4 @@
+
 export default {
   subAccount: 'Sub-account',
   searchInput: 'Please enter sub-account name',
@@ -12,6 +13,7 @@ export default {
   operate: 'Operate',
   addSubAccount: 'Add Sub-account',
   createSubAccount: 'Create Sub-account',
+  updateSubAccount: 'Update Sub-account',
   userNamePlaceholder: 'Please enter new sub-account name',
   passwordPlaceholder: 'Password is 6-15 characters long, including letters and numbers',
 }

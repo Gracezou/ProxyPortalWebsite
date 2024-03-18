@@ -3,7 +3,8 @@
     <div class="allow_list_header">
       <h1>{{ $t('rotating.history.title') }}</h1>
     </div>
-    <DynamicProxyListComp :data="rotatingDataCenterList" @order="createOrderHandler" />
+    <DynamicProxyListComp :data="rotatingDataCenterList" :starter-list="rotatingDataCenterStarterList"
+      @order="createOrderHandler" />
     <CreateOrder v-model="createOrderVisible" :data="currentProduct" />
   </div>
 </template>
@@ -16,6 +17,15 @@ import CreateOrder from '../components/CreateOrder.vue';
 onMounted(() => {
   getProductData()
 })
+const rotatingDataCenterStarterList = [
+  '500,000 datacenter IPs',
+  '220+ regions and countries',
+  'HTTP/HTTPS.',
+  'Traffic history monitoring',
+  'Bulk proxies generation',
+  '99.9% uptime.',
+  'Invalid IP will not be billed'
+]
 const loading = ref(false)
 const rotatingDataCenterList = ref([])
 const getProductData = () => {

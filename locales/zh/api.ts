@@ -38,4 +38,5 @@ export default {
   delimiterType: "分隔符 （\\r\\n:換行符 ,:逗號 |:竪線）",
   ipAddress: "IP地址",
   port: "端口",
+  global: "全球混播",
 }

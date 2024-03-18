@@ -48,7 +48,9 @@
       </div>
     </div>
     <client-only>
-      <el-dialog v-model="dialogVisible" :title="$t('subAccount.createSubAccount')" width="500" destroy-on-close center>
+      <el-dialog v-model="dialogVisible"
+        :title="editCurrentRowId ? $t('subAccount.updateSubAccount') : $t('subAccount.createSubAccount')" width="500"
+        destroy-on-close center>
         <el-form label-position="top" label-width="auto">
           <el-form-item :label="$t('subAccount.userName')">
             <el-input v-model="form.sub_username" :placeholder="$t('subAccount.userNamePlaceholder')" />

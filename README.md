@@ -129,3 +129,31 @@ time format
 static residential purchase
 search input width suitable
  manage proxy delete option
+
+3.17
+加载问题解决（多语言后缀还未加）
+刷新500目前没出现-部署服务器再试下
+
+增加登录状态拦截/logout显示问题再试试？
+
+首页
+繁体中文文案更换
+下拉菜单跳转补充
+
+注册拦截加了
+
+overview
+仪表盘
+subaccount 404
+切换tab不请求，增加刷新按钮/ 增加刷新状态
+时钟
+
+sub-account
+500应该修复 /表单增加 单位m
+
+proxy
+autorenew 请求修复
+样式同步
+下拉框提示语补充
+时间显示？
+remark保留pop？

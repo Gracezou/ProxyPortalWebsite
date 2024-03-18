@@ -18,17 +18,15 @@
         <span>{{ $t('menu.userAuth') }}</span>
       </el-menu-item>
       <el-menu-item index="/admin/account">
-        <el-image src="/icon/nav/subAccount.svg" />
+        <el-image src="/icon/nav/subaccount.svg" />
         <span>{{ $t('menu.subAccount') }}</span>
       </el-menu-item>
-
       <el-menu-item index="/admin/allow">
         <el-image src="/icon/nav/IPAllowlist.svg" />
         <span>{{ $t('menu.ipAllowList') }}</span>
       </el-menu-item>
       <el-divider />
       <el-menu-item-group :title="$t('menu.products')" />
-
       <el-sub-menu index="/admin/dynamic">
         <template #title>
           <el-image src="/icon/nav/Residential.svg" />
@@ -63,9 +61,7 @@
         <el-menu-item index="/admin/datacenter/purchase">{{ $t('menu.purchaseProxy') }}</el-menu-item>
         <el-menu-item index="/admin/datacenter/history">{{ $t('menu.paymentHistory') }}</el-menu-item>
         <el-menu-item index="/admin/datacenter/proxy">{{ $t('menu.manageProxy') }}</el-menu-item>
-
       </el-sub-menu>
-
     </el-menu>
   </el-aside>
 </template>
@@ -120,6 +116,16 @@ onMounted(() => {
 
   .el-menu-item {
     font-weight: 400;
+    font-family: 'Poppins Medium';
+
+    &.is-active,
+    &:hover {
+      background-color: #eaf0ff;
+    }
+  }
+
+  .el-menu-item-group {
+    font-family: 'Poppins Medium';
   }
 
 }
