@@ -19,7 +19,8 @@
         <el-table v-loading="loading" :data="tableData" :border="true" cell-class-name="list_cell_custom"
           header-cell-class-name="header_cell_custom">
           <el-table-column prop="ip" :align="'center'" :label="$t('allowlist.ipAddress')" />
-          <el-table-column prop="create_time" :label="$t('allowlist.addTime')" :align="'center'" />
+          <el-table-column prop="create_time" :label="$t('allowlist.addTime')" :align="'center'"
+            :formatter="(__, _, value) => formatShowTime(value)" />
           <el-table-column prop="remarks" :label="$t('allowlist.remark')" :align="'center'" />
           <el-table-column :label="$t('allowlist.operate')" :align="'center'">
             <template #default="scope">
@@ -55,11 +56,12 @@
     </client-only>
   </div>
 </template>
-  
+
 <script setup lang='ts'>
 import { Delete, Edit } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import http from '~/api/http';
+import { formatShowTime } from '~/utils/form';
 const tableData = ref([])
 const loading = ref(false)
 const pagination = reactive({
@@ -164,7 +166,7 @@ const submitHandler = () => {
 }
 
 </script>
-  
+
 <style lang="scss" scoped>
 .allow_list_wrapper {
   .allow_list_header {
@@ -252,7 +254,7 @@ const submitHandler = () => {
 
 }
 </style>
-<style lang="scss" >
+<style lang="scss">
 .allow_list_wrapper {
 
   .list_cell_custom {

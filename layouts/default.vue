@@ -14,7 +14,7 @@
 import AsideNav from './components/AsideNav.vue';
 import Header from './components/Header.vue';
 </script>
-<style lang="scss" >
+<style lang="scss">
 .admin_wrapper {
   background-color: #E9F4F9;
   flex-direction: column;
@@ -22,6 +22,7 @@ import Header from './components/Header.vue';
   .admin_body {
     padding: 0;
     border-top: 1px solid #D7D7D7;
+    box-sizing: border-box;
 
     .el-main {
       padding: 0;

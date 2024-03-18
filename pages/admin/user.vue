@@ -1,79 +1,100 @@
 <template>
-  <div class="allow_list_wrapper" v-loading="loading">
+  <div class="allow_list_wrapper">
     <div class="allow_list_header">
       <h1>{{ $t('userauth.title') }}</h1>
     </div>
-    <el-tabs v-model="tabName" type="border-card" @tab-click="changeTabHandler">
-      <el-tab-pane v-for="tab in tabsList" :key="tab.label" :label="$t(tab.label)" :name="tab.label">
-        <div class="tab_content">
-          <span class="content_label"> {{ $t(tab.valueLabel) }}:</span>
-          <span class="content_value"> {{ countValue }} {{ $t(tab.unit) }}</span>
-        </div>
-      </el-tab-pane>
-    </el-tabs>
-    <div class="allow_list_body">
-      <client-only>
-        <el-form size="large" :model="form">
-          <el-form-item label="选择国家/地区">
-            <el-select v-model="form.regions" clearable>
-              <el-option v-for="region in regionsList" :key="region.value" :label="region.label"
-                :value="region.value" />
-            </el-select>
-          </el-form-item>
-          <template v-if="tabName === 'api.staticResidentialProxy'">
-            <el-form-item label="选择ip">
-              <el-select v-model="form.staticIp" clearable>
-                <el-option v-for="region in proxySelectList" :key="region.ip" :label="region.ip" :value="region.ip" />
+    <el-scrollbar :height="contentHeight">
+      <el-tabs v-model="tabName" type="border-card" @tab-click="changeTabHandler">
+        <el-tab-pane v-for="tab in tabsList" :key="tab.label" :label="$t(tab.label)" :name="tab.label">
+          <div class="tab_content">
+            <div class="info">
+              <span class="content_label"> {{ $t(tab.valueLabel) }}:</span>
+              <span class="content_value"> {{ countValue }} {{ $t(tab.unit) }}</span>
+            </div>
+            <el-button :icon="RefreshLeft" @click="refreshHandler" />
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+      <div class="allow_list_body user_auth_body">
+        <client-only>
+          <el-form size="large" :model="form" label-width="auto" label-position="left">
+            <el-form-item label="选择国家/地区:">
+              <el-select v-model="form.regions" clearable @change="resetRegionsHandler">
+                <el-option v-for="region in regionsList" :key="region.value"
+                  :label="region.label.includes('api') ? $t(region.label) : region.label" :value="region.value" />
               </el-select>
             </el-form-item>
-          </template>
-          <el-form-item label="认证账号">
-            <el-select v-model="form.account" clearable>
-              <el-option v-for="account in subAccountList" :key="account.id" :label="account.account"
-                :value="account.id" />
-            </el-select>
-          </el-form-item>
-          <div class="part">
-
-            <el-form-item label="账号名">
-              <el-input v-model="form.username" disabled />
+            <template v-if="tabName.includes('static')">
+              <el-form-item label="选择ip:">
+                <el-select v-model="form.staticIp" clearable>
+                  <el-option v-for="region in staticShowProxyList" :key="region.ip" :label="region.ip"
+                    :value="region.ip" />
+                </el-select>
+              </el-form-item>
+            </template>
+            <el-form-item label="认证账号:">
+              <el-select v-model="form.account" clearable @change="selectAccountHandler">
+                <el-option v-for="account in subAccountList" :key="account.id" :label="account.account"
+                  :value="account.id" />
+              </el-select>
             </el-form-item>
-            <el-form-item label="密码">
-              <el-input v-model="form.password" disabled />
-            </el-form-item>
-          </div>
-        </el-form>
-      </client-only>
-      <div class="code_content">
-        <div class="code_title">
-          <div class="code_title_tips">
-            <div class="white">测试命令</div>
-            <div class="red">*所有类型IP仅支持在境外网络环境下使用</div>
-          </div>
-          <div class="button_box">
-            <el-button type="primary" size="large" class="red_style" @click="copyUrlHandler">复制链接</el-button>
-          </div>
-        </div>
-        <div class="code_box">
-          {{ generateUrl }}
-        </div>
-      </div>
-
-      <div class="gen_options_wrapper">
-        <client-only>
-          <el-select v-model="generateMethod" size="large">
-            <el-option v-for="str in generateMethodOptions" :key="str" :label="str" :value="str" />
-          </el-select>
+            <div class="part">
+              <el-form-item label="账号名:">
+                <el-input v-model="form.username" disabled />
+              </el-form-item>
+              <el-form-item label="密码:">
+                <el-input v-model="form.password" disabled />
+              </el-form-item>
+            </div>
+          </el-form>
         </client-only>
+        <div class="code_content">
+          <div class="code_title">
+            <div class="code_title_tips">
+              <div class="white">测试命令</div>
+              <div class="red">*所有类型IP仅支持在境外网络环境下使用</div>
+            </div>
+            <div class="button_box">
+              <el-button type="primary" size="large" class="red_style"
+                @click="copyUrlHandler(generateUrl)">复制链接</el-button>
+            </div>
+          </div>
+          <div class="code_box">
+            {{ generateUrl }}
+          </div>
+        </div>
+
+        <div class="gen_options_wrapper">
+          <client-only>
+            <el-select v-model="generateMethod" size="large">
+              <el-option v-for="str in generateMethodOptions" :key="str" :label="str" :value="str" />
+            </el-select>
+          </client-only>
+          <el-button type="primary" size="large" class="green_style" @click="batchGenerateHandler">批量生成</el-button>
+        </div>
+
+        <div class="code_content">
+          <div class="code_title">
+            <div class="code_title_tips">
+              <div class="white">测试命令</div>
+            </div>
+            <div class="button_box">
+              <el-button type="primary" size="large" class="red_style"
+                @click="copyUrlHandler(showGenerateList.join())">复制链接</el-button>
+            </div>
+          </div>
+          <div class="code_box">
+            <p v-for="s in showGenerateList" :key="s">{{ s }}</p>
+          </div>
+        </div>
       </div>
+    </el-scrollbar>
 
-
-
-    </div>
   </div>
 </template>
 
 <script setup lang='ts'>
+import { RefreshLeft, } from '@element-plus/icons-vue';
 import http from '~/api/http';
 // 认证账号是二级账号  pageSize 100 选择 =数据
 // ip类型
@@ -84,16 +105,34 @@ import http from '~/api/http';
 // IP切换  - 删除
 // 全球动态 - 套餐 - 删除
 import { isEmpty } from 'lodash-es';
+
+// 动态计算当前去掉顶部导航栏的页面高度
+const contentHeight = computed(() => {
+  return document.documentElement.clientHeight - 160
+})
+
 const countValue = ref(0)
 const regionsList = ref<{ label: string, value: string }[]>([])
-const loading = ref(false)
 const tabName = ref('')
 const changeTabHandler = (tab: any) => {
   const currentTab = tabsList.value[tab.index]
   resetData()
   return currentTab.handler()
 }
+const refreshHandler = () => {
+  const currentTab = tabsList.value.find(tab => tab.label === tabName.value)
+  if (!currentTab) return
+  currentTab.refreshHandler().then(() =>
+    currentTab.handler()
+  )
+}
 onMounted(() => {
+  Promise.all([
+    getDynamicResidentialData(),
+    getRotatingDataCenterData(),
+    getStaticResidentialData(),
+    getStaticDataCenterData()
+  ])
   const currentTab = tabsList.value[0]
   currentTab.handler()
   tabName.value = currentTab.label
@@ -102,102 +141,137 @@ onMounted(() => {
 const resetData = () => {
   countValue.value = 0
   regionsList.value = []
-  generateUrl.value = ''
-  // form.regions = ''
+  form.regions = ''
 }
-
-const dynamicResidentialHandler = () => {
-  loading.value = true
+const resetRegionsHandler = () => {
+  if (tabName.value.includes('static')) {
+    form.staticIp = staticShowProxyList.value[0].ip
+  }
+}
+const dynamicResidentialData = ref<any>({
+  flow: 0,
+  regions: []
+})
+const getDynamicResidentialData = () =>
   Promise.all([
     http.get('/v1/website/current_user_info'),
     http.get('/v1/website/regions/DynamicResidential')
   ]).then(([flowResult, regionResult]: any) => {
     const flow = flowResult.DynamicResidentialProxyUsage
     if (flow) {
-      countValue.value = (flow.last_flow) / 1000 || 0
+      dynamicResidentialData.value.flow = (flow.last_flow) / 1000 || 0
     }
-    const country_list: string[] = isEmpty(regionResult.continent) ? [] : Object.values(regionResult.continent)
-    regionsList.value = country_list.map((item: string) => {
-      return { label: item, value: item }
-    })
-  }).finally(() => {
-    loading.value = false
+    dynamicResidentialData.value.regions = isEmpty(regionResult.continent) ? [] : Object.values(regionResult.continent)
+  })
+
+const dynamicResidentialHandler = () => {
+  countValue.value = dynamicResidentialData.value.flow
+  regionsList.value = dynamicResidentialData.value.regions.map((item: any) => {
+    return { label: item.country_name, value: item.country_code }
   })
 }
 
-const rotatingDataCenterHandler = () => {
-  loading.value = true
+const rotatingDataCenterData = ref<any>({
+  flow: 0,
+  regions: []
+})
+const getRotatingDataCenterData = () =>
   Promise.all([
     http.get('/v1/website/overview/RotatingDatacenter'),
     http.get('/v1/website/regions/RotatingDatacenter')
   ]).then(([flowResult, regionResult]: any) => {
-    countValue.value = (flowResult.total_flow - flowResult.used_flow) / 1000
-    regionsList.value = regionResult.map((item: any) => {
+    rotatingDataCenterData.value.flow = (flowResult.total_flow - flowResult.used_flow) / 1000
+    rotatingDataCenterData.value.regions = regionResult.map((item: any) => {
       return { label: item.country_name, value: item.country_code }
     })
-    console.log(regionsList.value)
-  }).finally(() => {
-    loading.value = false
   })
 
+const rotatingDataCenterHandler = () => {
+  countValue.value = rotatingDataCenterData.value.flow
+  regionsList.value = rotatingDataCenterData.value.regions
 }
 
 
-const proxyList = ref<{ ip: string, port: string, region: string }[]>([])
-const proxySelectList = computed(() => {
-  if (form.regions === '') {
-    return proxyList.value.map(item => {
-      const proxy = item.ip.split(':')
-      return { ip: proxy[0], port: proxy[1], region: item.region }
-    })
-  }
-  return proxyList.value.filter((item) => item.region === form.regions)
-})
-const staticResidentialHandler = () => {
-  loading.value = true
-  Promise.all([
-    http.get('/v1/website/Usage/StaticDatacenter'),
 
-  ]).then(([res, accountResult]: any[]) => {
-    countValue.value = res.quantity
-    regionsList.value = res.country_list.map((item: string) => {
+const staticShowProxyList = computed(() => {
+  const list = tabName.value === 'api.staticResidentialProxy'
+    ? staticResidentialData.proxyList : staticDataCenterData.proxyList
+  if (form.regions === 'custom') return list
+  return list.filter((item: any) => item.region === form.regions)
+})
+const staticResidentialData = reactive<any>({
+  flow: 0,
+  regions: [],
+  proxyList: []
+})
+const getStaticResidentialData = () =>
+  http.get('/v1/website/Usage/StaticDatacenter')
+    .then((res: any) => {
+      staticResidentialData.flow = res.quantity
+      staticResidentialData.regions = res.country_list.map((item: string) => {
+        return { label: item, value: item }
+      })
+      staticResidentialData.regions.unshift({ label: 'api.global', value: 'custom' })
+      staticResidentialData.proxyList = res.proxy_list
+    })
+
+const staticResidentialHandler = () => {
+  resetData()
+  countValue.value = staticResidentialData.flow
+  regionsList.value = staticResidentialData.regions
+  form.regions = staticResidentialData.regions[0].value
+  form.staticIp = staticShowProxyList.value[0].ip
+}
+
+
+const staticDataCenterData = reactive<any>({
+  flow: 0,
+  regions: [],
+  proxyList: []
+})
+
+const getStaticDataCenterData = () =>
+  http.get('/v1/website/Usage/StaticResidential').then((res: any) => {
+    staticDataCenterData.flow = res.quantity
+    staticDataCenterData.regions = res.country_list.map((item: string) => {
       return { label: item, value: item }
     })
-    proxyList.value = res.proxy_list
-    subAccountList.value = accountResult.cur_data
-  }).finally(() => {
-    loading.value = false
+    staticDataCenterData.regions.unshift({ label: 'api.global', value: 'custom' })
+    staticDataCenterData.proxyList = res.proxy_list
   })
-}
+
 
 const staticDataCenterHandler = () => {
   resetData()
-  loading.value = true
-  http.get('/v1/website/Usage/StaticResidential').then((res: any) => {
-    countValue.value = res.quantity
-    regionsList.value = res.country_list.map((item: string) => {
-      return { label: item, value: item }
-    })
-  }).finally(() => {
-    loading.value = false
-  })
+  countValue.value = staticDataCenterData.flow
+  regionsList.value = staticDataCenterData.regions
+  form.regions = staticDataCenterData.regions[0].value
+  form.staticIp = staticDataCenterData.proxyList[0].ip
 }
 
 const tabsList = ref([
-  { label: 'api.dynamicProxy', handler: dynamicResidentialHandler, valueLabel: 'api.trafficRemain', unit: 'api.MB', generateUrl: '/v1/website/generate/DynamicResidential' },
-  { label: 'api.rotatingDataCenterProxy', handler: rotatingDataCenterHandler, valueLabel: 'api.trafficRemain', unit: 'api.GB', generateUrl: '/v1/website/generate/RotatingDatacenter' },
-  { label: 'api.staticResidentialProxy', handler: staticResidentialHandler, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticResidential' },
-  { label: 'api.staticDataCenterProxy', handler: staticDataCenterHandler, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticDatacenter' },
+  { label: 'api.dynamicProxy', handler: dynamicResidentialHandler, refreshHandler: getDynamicResidentialData, valueLabel: 'api.trafficRemain', unit: 'api.MB', generateUrl: '/v1/website/generate/DynamicResidential' },
+  { label: 'api.rotatingDataCenterProxy', handler: rotatingDataCenterHandler, refreshHandler: getRotatingDataCenterData, valueLabel: 'api.trafficRemain', unit: 'api.GB', generateUrl: '/v1/website/generate/RotatingDatacenter' },
+  { label: 'api.staticResidentialProxy', handler: staticResidentialHandler, refreshHandler: getStaticResidentialData, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticResidential' },
+  { label: 'api.staticDataCenterProxy', handler: staticDataCenterHandler, refreshHandler: getStaticDataCenterData, valueLabel: 'api.totalAvailable', unit: 'api.IP', generateUrl: '/v1/website/generate/StaticDatacenter' },
 ])
 
 // 认证账号
 const subAccountList = ref<any[]>([])
-const getSubAccountHandler = () => {
-  http.get('/v1/website/get_sub_account_list', { params: { cur_page: 1, page_size: 100 } }).then((res: any) => {
-    subAccountList.value = res.cur_data
-  })
-}
+const getSubAccountHandler = () =>
+  http.get('/v1/website/get_sub_account_list', { params: { cur_page: 1, page_size: 100 } })
+    .then((res: any) => {
+      subAccountList.value = res.cur_data
+      form.account = subAccountList.value[0].id
+      selectAccountHandler(subAccountList.value[0].id)
+    })
+
 onMounted(() => getSubAccountHandler())
+const selectAccountHandler = (id: string) => {
+  const account = subAccountList.value.find((item: any) => item.id === id)
+  form.username = account.account
+  form.password = account.password
+}
 
 const form = reactive({
   num: 1,
@@ -208,12 +282,16 @@ const form = reactive({
   password: ''
 })
 
-const generateUrl = ref('')
+const generateUrl = computed(() => {
+  if (!form.regions) return ''
+  if (tabName.value.includes('static')) {
+    return `curl -x ${form.staticIp}:2333 -U "${form.username}:${form.password}" ruby.rubyproxy.io`
+  }
+})
 // 复制链接
-const copyUrlHandler = () => {
-  if (!generateUrl.value) return ElMessage.error('请先生成链接')
+const copyUrlHandler = (url: string | undefined) => {
   const input = document.createElement('input')
-  input.value = generateUrl.value
+  input.value = url || ''
   document.body.appendChild(input)
   input.select()
   document.execCommand('Copy')
@@ -230,20 +308,36 @@ const generateMethodOptions = ref([
 ])
 const showGenerateList = ref<any[]>([])
 const batchGenerateHandler = () => {
-  proxySelectList.value.map((item) => {
+  const list = staticShowProxyList.value.map((item: any) => {
+    const [ip, port] = item.ip.split(':')
     return {
-      ip: item.ip,
-      port: item.port,
+      ip,
+      port,
       username: form.username,
       password: form.password,
     }
   })
+  // 根据选择的生成方式生成链接
+  showGenerateList.value = list.map((item: any) => {
+    const { ip, port, username, password } = item
+    const hostname = ip
+    const url = generateMethod.value
+      .replace('username', username)
+      .replace('password', password)
+      .replace('hostname', hostname)
+      .replace('port', port)
+    return url
+  })
 
 }
+
 </script>
 
 <style scoped lang="scss">
 .allow_list_wrapper {
+  overflow: hidden;
+  height: 100%;
+
   .allow_list_header {
     padding: 0 40px;
     display: flex;
@@ -263,13 +357,14 @@ const batchGenerateHandler = () => {
     background-color: #fff;
     border-radius: 20px;
     padding: 40px;
+    overflow: auto;
   }
 
   .tab_content {
     height: 72px;
     display: flex;
-    align-items: flex-end;
-
+    justify-content: space-between;
+    align-items: center;
   }
 
   .content_label {
@@ -308,7 +403,8 @@ const batchGenerateHandler = () => {
   }
 
   .code_content {
-    height: 146px;
+    min-height: 146px;
+    height: auto;
     padding: 20px 40px;
     background: #000;
 
@@ -351,9 +447,46 @@ const batchGenerateHandler = () => {
     width: 99%;
     text-align: left;
     color: #5fcf3f;
-    line-height: 80px;
+    padding-top: 20px;
+    line-height: 20px;
+    height: auto;
+
+    p {
+      margin: 0;
+    }
   }
 
+}
+
+.user_auth_body {
+  .el-select {
+    width: 200px;
+  }
+
+  .part {
+    display: flex;
+    gap: 30px;
+
+    .el-input {
+      width: 300px;
+    }
+  }
+
+  .code_content {
+    margin-top: 40px;
+  }
+}
+
+.gen_options_wrapper {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 40px;
+
+  .el-select {
+    width: 350px;
+  }
 }
 </style>
 

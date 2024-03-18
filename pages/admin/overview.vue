@@ -126,9 +126,9 @@ const dynamicResidentialOptions = {
 const getDynamicResidential = () =>
   http.get('/v1/website/current_user_info')
     .then((res: any) => {
-      dynamicResidentialOptions.last_flow = res.DynamicResidentialProxyUsage.last_flow / 1000 || 0
-      dynamicResidentialOptions.total_flow = res.DynamicResidentialProxyUsage.total_flow / 1000 || 0
-      dynamicResidentialOptions.use_flow = res.DynamicResidentialProxyUsage.use_flow / 1000 || 0
+      dynamicResidentialOptions.last_flow = res.DynamicResidentialProxyUsage.last_flow
+      dynamicResidentialOptions.total_flow = res.DynamicResidentialProxyUsage.total_flow
+      dynamicResidentialOptions.use_flow = res.DynamicResidentialProxyUsage.use_flow
     })
 const dynamicResidentialHandler = () => {
   price.value = proxyPriceMap.value.DynamicResidential
@@ -145,9 +145,9 @@ const rotatingDataCenterOptions = {
 const getRotatingDataCenter = () =>
   http.get('/v1/website/overview/RotatingDatacenter')
     .then((res: any) => {
-      rotatingDataCenterOptions.last_flow = res.last_flow / 1000 || 0
-      rotatingDataCenterOptions.total_flow = res.total_flow / 1000 || 0
-      rotatingDataCenterOptions.use_flow = res.used_flow / 1000 || 0
+      rotatingDataCenterOptions.last_flow = res.last_flow
+      rotatingDataCenterOptions.total_flow = res.total_flow
+      rotatingDataCenterOptions.use_flow = res.used_flow
     })
 
 const rotatingDataCenterHandler = () => {

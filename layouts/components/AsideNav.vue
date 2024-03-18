@@ -82,10 +82,11 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .aside_wrapper {
-  height: calc(100vh - 84px);
+  height: calc(100vh - 85px);
   background-color: #fff;
   padding: 15px 14px;
   border-right: #D7D7D7 1px solid;
+  box-sizing: border-box;
 
   .el-image {
     width: 24px;

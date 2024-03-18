@@ -189,7 +189,7 @@ const getProxiesLastItem = {
 
 <template>
   <ClientOnly>
-    <el-affix :offset="0">
+    <el-affix :offset="0" class="header_affix">
       <el-header class="header_wrapper">
         <LogoComp class="header_logo_wrapper" @click="goHomeHandler" />
         <div class="menu_wrapper">
@@ -349,6 +349,11 @@ const getProxiesLastItem = {
 </template>
 
 <style lang="scss" scoped>
+.el-affix.header_affix {
+  height: 84px;
+  box-sizing: border-box;
+}
+
 .header_wrapper {
   display: flex;
   align-items: center;
@@ -356,6 +361,7 @@ const getProxiesLastItem = {
   height: 84px;
   background-color: transparent;
   user-select: none;
+  box-sizing: border-box;
 
   .el-dropdown {
     height: 40px;

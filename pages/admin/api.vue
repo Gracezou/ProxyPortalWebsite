@@ -333,7 +333,6 @@ const resultInterfaceData = ref([
   { name: 'PORT', type: 'int', desc: 'api.port' },
 ])
 
-const option = ref({})
 </script>
 
 <style scoped lang="scss">
